@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@theme {
+  --color-mystic: #1a0a2e;
+  --color-mystic-light: #2d1b4e;
+  --color-mystic-card: #1f1035;
+  --color-mystic-card-hover: #2a1845;
+  --color-purple-glow: #9b59b6;
+  --color-purple-dim: #7d3c98;
+  --color-gold: #f1c40f;
+  --color-gold-dim: #d4ac0d;
+  --color-crystal: #e8daef;
+  --color-text-primary: #f5f0ff;
+  --color-text-secondary: #b8a9cc;
+  --color-text-muted: #6c5b7b;
+  --color-border: #3d2a5c;
+  --color-fire: #e74c3c;
+  --color-water: #3498db;
+  --color-wood: #27ae60;
+  --color-metal: #bdc3c7;
+  --color-earth: #d4a437;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
+  background: linear-gradient(135deg, #0d0221 0%, #1a0a2e 50%, #150929 100%);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-mystic); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
