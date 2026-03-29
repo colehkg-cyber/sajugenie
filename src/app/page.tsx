@@ -1,16 +1,26 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   getTodayTarot, getLuckyElements, getDailyFortune, getAnimalSign, getZodiac,
-  getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, PHYSIOGNOMY,
+  getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, JIJI, CHEONGAN,
+  PHYSIOGNOMY,
 } from "@/data/fortune";
 
-type View = "home" | "today" | "my" | "tarot" | "monthly" | "face";
+type Tab = "root" | "chat" | "my";
+
+interface Profile {
+  name: string;
+  nameHanja: string;
+  year: string;
+  month: string;
+  day: string;
+  hour: string;
+}
 
 function Stars() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      {Array.from({ length: 50 }).map((_, i) => (
+      {Array.from({ length: 40 }).map((_, i) => (
         <div key={i} className="absolute rounded-full bg-white/20" style={{
           width: `${Math.random() * 3 + 1}px`, height: `${Math.random() * 3 + 1}px`,
           top: `${Math.random() * 100}%`, left: `${Math.random() * 100}%`,
@@ -23,23 +33,20 @@ function Stars() {
   );
 }
 
-function Nav({ view, setView }: { view: View; setView: (v: View) => void }) {
-  const items: { id: View; icon: string; label: string }[] = [
-    { id: "home", icon: "🏠", label: "홈" },
-    { id: "today", icon: "🔮", label: "오늘의 운세" },
-    { id: "my", icon: "⭐", label: "나의 운세" },
-    { id: "tarot", icon: "🃏", label: "타로" },
-    { id: "monthly", icon: "📅", label: "월별 운세" },
-    { id: "face", icon: "👤", label: "인상학" },
+function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
+  const items: { id: Tab; icon: string; label: string }[] = [
+    { id: "root", icon: "🔮", label: "근본" },
+    { id: "chat", icon: "💬", label: "타일러 도사" },
+    { id: "my", icon: "👤", label: "마이페이지" },
   ];
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-mystic/90 backdrop-blur-xl border-t border-border md:static md:border-t-0 md:border-b">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-mystic/95 backdrop-blur-xl border-t border-border safe-bottom">
       <div className="flex justify-around max-w-lg mx-auto">
         {items.map((t) => (
-          <button key={t.id} onClick={() => setView(t.id)}
-            className={`flex flex-col items-center py-2 px-3 text-xs transition-colors ${view === t.id ? "text-gold" : "text-text-muted hover:text-text-secondary"}`}>
-            <span className="text-lg">{t.icon}</span>
-            <span className="mt-0.5">{t.label}</span>
+          <button key={t.id} onClick={() => setTab(t.id)}
+            className={`flex flex-col items-center py-3 px-4 text-xs transition-colors ${tab === t.id ? "text-gold" : "text-text-muted hover:text-text-secondary"}`}>
+            <span className="text-xl">{t.icon}</span>
+            <span className="mt-1">{t.label}</span>
           </button>
         ))}
       </div>
@@ -49,463 +56,404 @@ function Nav({ view, setView }: { view: View; setView: (v: View) => void }) {
 
 function ScoreBar({ score, max = 5 }: { score: number; max?: number }) {
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-0.5">
       {Array.from({ length: max }).map((_, i) => (
-        <div key={i} className={`w-4 h-4 rounded-full ${i < score ? "bg-gold" : "bg-border"}`} />
+        <div key={i} className={`w-3 h-3 rounded-full ${i < score ? "bg-gold" : "bg-border"}`} />
       ))}
     </div>
   );
 }
 
-function HomePage() {
-  return (
-    <div className="text-center space-y-8 py-8">
-      <div className="space-y-3">
-        <h1 className="text-4xl md:text-5xl font-bold">
-          <span className="bg-gradient-to-r from-purple-glow via-gold to-purple-glow bg-clip-text text-transparent">
-            🔮 타일러의 타이르는 운세
-          </span>
-        </h1>
-        <p className="text-text-secondary text-sm md:text-base">
-          동서양 심리철학 융합 운세 AI
-        </p>
-        <p className="text-text-muted text-xs">
-          사주 · 타로 · 수비학 · 별자리 · 인상학 · 최면심리학
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
-        <div className="bg-mystic-card border border-border rounded-2xl p-5 hover:border-purple-glow/40 transition-all cursor-pointer">
-          <span className="text-3xl">🔮</span>
-          <p className="text-sm font-medium mt-2">오늘의 운세</p>
-          <p className="text-[10px] text-text-muted mt-1">일운 · 타로 · 행운요소</p>
-        </div>
-        <div className="bg-mystic-card border border-border rounded-2xl p-5 hover:border-gold/40 transition-all cursor-pointer">
-          <span className="text-3xl">⭐</span>
-          <p className="text-sm font-medium mt-2">나의 운세</p>
-          <p className="text-[10px] text-text-muted mt-1">사주 · 별자리 · 수비학</p>
-        </div>
-        <div className="bg-mystic-card border border-border rounded-2xl p-5 hover:border-fire/40 transition-all cursor-pointer">
-          <span className="text-3xl">🃏</span>
-          <p className="text-sm font-medium mt-2">타로 카드</p>
-          <p className="text-[10px] text-text-muted mt-1">메이저 아르카나 22장</p>
-        </div>
-        <div className="bg-mystic-card border border-border rounded-2xl p-5 hover:border-water/40 transition-all cursor-pointer">
-          <span className="text-3xl">📅</span>
-          <p className="text-sm font-medium mt-2">2026 월별 운세</p>
-          <p className="text-[10px] text-text-muted mt-1">병오년 월별 기운</p>
-        </div>
-      </div>
-
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 max-w-sm mx-auto">
-        <p className="text-gold text-sm font-medium mb-2">✨ 2026 병오(丙午)년</p>
-        <p className="text-xs text-text-secondary leading-relaxed">
-          태양(丙) + 말(午) = 화기(火氣) 폭발의 해<br />
-          열정, 확장, 변화, 스피드의 에너지가 넘칩니다
-        </p>
-      </div>
-
-      <p className="text-[10px] text-text-muted">
-        타일러의 타이르는 운세 · 엔터테인먼트 목적 · v2.0
-      </p>
-    </div>
-  );
+// 일진 계산 (간단 시뮬레이션)
+function getDailyGanji() {
+  const today = new Date();
+  const base = new Date(2026, 0, 1); // 2026.1.1 = 대략 계산용
+  const diff = Math.floor((today.getTime() - base.getTime()) / 86400000);
+  const ganIdx = (diff + 6) % 10; // 기준점 보정
+  const jiIdx = (diff + 0) % 12;
+  return { gan: CHEONGAN[ganIdx], ji: JIJI[jiIdx] };
 }
 
-function TodayPage() {
-  const fortune = getDailyFortune();
+// 띠별 오늘 운세 점수 (일진과의 관계)
+function getAnimalDailyScore(animalIdx: number) {
+  const { ji } = getDailyGanji();
+  const dayIdx = JIJI.indexOf(ji);
+  const relations: Record<string, number> = {};
+  // 삼합
+  const samhap = [[0,4,8],[1,5,9],[2,6,10],[3,7,11]];
+  samhap.forEach(g => { if (g.includes(dayIdx)) g.forEach(i => { relations[String(i)] = 95; }); });
+  // 육합
+  const yukhap = [[0,1],[2,11],[3,10],[4,9],[5,8],[6,7]];
+  yukhap.forEach(([a,b]) => {
+    if (dayIdx === a) relations[String(b)] = 92;
+    if (dayIdx === b) relations[String(a)] = 92;
+  });
+  // 충
+  const chung = (dayIdx + 6) % 12;
+  relations[String(chung)] = 40;
+  // 형
+  const hyung: Record<number, number[]> = { 0: [3], 3: [0], 2: [5,8], 5: [2,8], 8: [2,5], 1: [10,9], 10: [1,9], 9: [1,10] };
+  (hyung[dayIdx] || []).forEach(i => { if (!relations[String(i)]) relations[String(i)] = 48; });
+  
+  return relations[String(animalIdx)] || (60 + Math.floor(Math.random() * 20));
+}
+
+// ========== 근본 탭 ==========
+function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile: (p: Profile) => void; saved: boolean }) {
+  const [showResult, setShowResult] = useState(saved);
+  const ganji = getDailyGanji();
+  const today = new Date();
+  const days = ["일", "월", "화", "수", "목", "금", "토"];
+  const dateStr = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,"0")}.${String(today.getDate()).padStart(2,"0")} ${days[today.getDay()]}`;
+
+  const handleSubmit = () => {
+    if (!profile.year || !profile.month || !profile.day) return;
+    localStorage.setItem("tyler_profile", JSON.stringify(profile));
+    localStorage.setItem("tyler_history", JSON.stringify([
+      ...(JSON.parse(localStorage.getItem("tyler_history") || "[]")),
+      { date: dateStr, type: "근본분석" }
+    ]));
+    setShowResult(true);
+  };
+
+  const y = parseInt(profile.year), m = parseInt(profile.month), d = parseInt(profile.day);
+  const animal = y ? getAnimalSign(y) : null;
+  const zodiac = m && d ? getZodiac(m, d) : null;
+  const lifePath = y && m && d ? getLifePath(y, m, d) : null;
   const tarot = getTodayTarot();
   const lucky = getLuckyElements();
-  const today = new Date();
-  const dateStr = `${today.getFullYear()}년 ${today.getMonth()+1}월 ${today.getDate()}일`;
+  const myAnimalIdx = animal ? JIJI.indexOf(animal) : -1;
 
-  return (
-    <div className="space-y-6 py-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gold">🔮 오늘의 운세</h2>
-        <p className="text-text-muted text-xs mt-1">{dateStr}</p>
-      </div>
+  // 오행 관계 해석
+  const ganElement = ganji.gan.element;
+  const ganYinyang = ganji.gan.yinyang;
+  const jiElement = ganji.ji.element;
+  const elementRelation = ganElement === "금" && jiElement === "수" ? "금생수(金生水)" :
+    ganElement === "수" && jiElement === "목" ? "수생목(水生木)" :
+    ganElement === "목" && jiElement === "화" ? "목생화(木生火)" :
+    ganElement === "화" && jiElement === "토" ? "화생토(火生土)" :
+    ganElement === "토" && jiElement === "금" ? "토생금(土生金)" : 
+    `${ganElement}+${jiElement}`;
 
-      {/* 종합 점수 */}
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 text-center">
-        <p className="text-text-muted text-xs mb-1">오늘의 종합 운세</p>
-        <p className="text-5xl font-bold text-gold">{fortune.total}<span className="text-lg text-text-muted">/100</span></p>
-      </div>
+  if (!showResult) {
+    return (
+      <div className="space-y-6 py-4">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">
+            <span className="bg-gradient-to-r from-purple-glow via-gold to-purple-glow bg-clip-text text-transparent">
+              🔮 타일러의 타이르는 운세
+            </span>
+          </h1>
+          <p className="text-text-secondary text-xs">동서양 심리철학 융합 운세 AI</p>
+        </div>
 
-      {/* 분야별 */}
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
-        <h3 className="font-bold text-sm text-purple-glow">📊 분야별 운세</h3>
-        {fortune.categories.map((c) => (
-          <div key={c.cat} className="flex items-center justify-between">
-            <span className="text-sm">{c.cat}</span>
-            <ScoreBar score={c.score} />
+        <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-4">
+          <h2 className="font-bold text-gold text-center">📝 근본 입력</h2>
+          
+          <div>
+            <label className="text-xs text-text-muted">이름</label>
+            <input type="text" placeholder="안현준" value={profile.name}
+              onChange={(e) => setProfile({...profile, name: e.target.value})}
+              className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
           </div>
-        ))}
-      </div>
 
-      {/* 타로 3장 */}
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
-        <h3 className="font-bold text-sm text-purple-glow">🃏 오늘의 타로 3장</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {tarot.map((t, i) => (
-            <div key={i} className="bg-mystic/50 border border-border rounded-xl p-3 text-center">
-              <p className="text-xs text-text-muted">{["과거", "현재", "미래"][i]}</p>
-              <p className="text-2xl mt-1">{["🌙", "⭐", "☀️"][i]}</p>
-              <p className="text-xs font-bold mt-1">{t.name}</p>
-              <p className="text-[10px] text-text-secondary mt-0.5">{t.keyword}</p>
+          <div>
+            <label className="text-xs text-text-muted">이름 한자 발음 (선택)</label>
+            <input type="text" placeholder="밝을현 준법준" value={profile.nameHanja}
+              onChange={(e) => setProfile({...profile, nameHanja: e.target.value})}
+              className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="text-xs text-text-muted">생년 *</label>
+              <input type="number" placeholder="1995" value={profile.year}
+                onChange={(e) => setProfile({...profile, year: e.target.value})}
+                className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 행운 요소 */}
-      <div className="bg-mystic-card border border-border rounded-2xl p-5">
-        <h3 className="font-bold text-sm text-purple-glow mb-3">🍀 오늘의 행운 요소</h3>
-        <div className="grid grid-cols-3 gap-3 text-center">
-          <div>
-            <p className="text-xs text-text-muted">행운색</p>
-            <p className="text-lg font-bold text-gold">{lucky.color}</p>
+            <div>
+              <label className="text-xs text-text-muted">월 *</label>
+              <input type="number" placeholder="12" min="1" max="12" value={profile.month}
+                onChange={(e) => setProfile({...profile, month: e.target.value})}
+                className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
+            </div>
+            <div>
+              <label className="text-xs text-text-muted">일 *</label>
+              <input type="number" placeholder="28" min="1" max="31" value={profile.day}
+                onChange={(e) => setProfile({...profile, day: e.target.value})}
+                className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-text-muted">행운숫자</p>
-            <p className="text-lg font-bold text-gold">{lucky.number}</p>
-          </div>
-          <div>
-            <p className="text-xs text-text-muted">행운방위</p>
-            <p className="text-lg font-bold text-gold">{lucky.direction}</p>
-          </div>
-        </div>
-      </div>
 
-      <div className="bg-mystic-card border border-gold/20 rounded-2xl p-5 text-center">
-        <p className="text-gold text-sm">💡 콜잇도사의 한마디</p>
-        <p className="text-xs text-text-secondary mt-2 leading-relaxed">
-          &ldquo;오늘은 {fortune.total >= 60 ? "좋은 기운이 함께합니다. 적극적으로 움직여보세요!" :
-          fortune.total >= 40 ? "무난한 하루입니다. 차분하게 본업에 집중하세요." :
-          "에너지를 아끼는 날입니다. 큰 결정은 내일로 미루세요."}&rdquo;
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function MyFortunePage() {
-  const [birth, setBirth] = useState({ year: "", month: "", day: "", hour: "" });
-  const [result, setResult] = useState<null | { animal: typeof import("@/data/fortune").JIJI[0]; zodiac: typeof import("@/data/fortune").ZODIAC[0]; lifePath: number }>(null);
-
-  const calculate = () => {
-    const y = parseInt(birth.year), m = parseInt(birth.month), d = parseInt(birth.day);
-    if (!y || !m || !d) return;
-    setResult({
-      animal: getAnimalSign(y),
-      zodiac: getZodiac(m, d),
-      lifePath: getLifePath(y, m, d),
-    });
-  };
-
-  const lifePathMeaning: Record<number, string> = {
-    1: "독립적 리더, 개척자의 길",
-    2: "조화와 협력의 외교관",
-    3: "창의적 표현자, 소통의 달인",
-    4: "안정과 체계의 건축가",
-    5: "자유와 모험의 탐험가",
-    6: "책임과 봉사의 돌봄이",
-    7: "탐구와 분석의 철학자",
-    8: "성취와 권력의 야망가",
-    9: "인도와 완성의 이상주의자",
-    11: "영적 직관의 마스터",
-    22: "비전 실현의 건설자",
-    33: "치유와 가르침의 헌신자",
-  };
-
-  return (
-    <div className="space-y-6 py-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gold">⭐ 나의 운세</h2>
-        <p className="text-text-muted text-xs mt-1">생년월일시를 입력하세요</p>
-      </div>
-
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs text-text-muted">태어난 해</label>
-            <input type="number" placeholder="1995" value={birth.year}
-              onChange={(e) => setBirth({ ...birth, year: e.target.value })}
-              className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-purple-glow/50 outline-none" />
-          </div>
-          <div>
-            <label className="text-xs text-text-muted">태어난 월</label>
-            <input type="number" placeholder="12" min="1" max="12" value={birth.month}
-              onChange={(e) => setBirth({ ...birth, month: e.target.value })}
-              className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-purple-glow/50 outline-none" />
-          </div>
-          <div>
-            <label className="text-xs text-text-muted">태어난 일</label>
-            <input type="number" placeholder="28" min="1" max="31" value={birth.day}
-              onChange={(e) => setBirth({ ...birth, day: e.target.value })}
-              className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-purple-glow/50 outline-none" />
-          </div>
           <div>
             <label className="text-xs text-text-muted">태어난 시 (선택)</label>
-            <input type="number" placeholder="15" min="0" max="23" value={birth.hour}
-              onChange={(e) => setBirth({ ...birth, hour: e.target.value })}
-              className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-purple-glow/50 outline-none" />
+            <input type="number" placeholder="15" min="0" max="23" value={profile.hour}
+              onChange={(e) => setProfile({...profile, hour: e.target.value})}
+              className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
           </div>
+
+          <button onClick={handleSubmit}
+            className="w-full py-3.5 bg-gradient-to-r from-purple-glow to-gold rounded-xl font-bold text-sm hover:opacity-90 transition">
+            🔮 운세 보기
+          </button>
         </div>
-        <button onClick={calculate}
-          className="w-full py-3 bg-gradient-to-r from-purple-glow to-purple-dim rounded-xl font-bold text-sm hover:opacity-90 transition">
-          🔮 운세 보기
-        </button>
+
+        <p className="text-[10px] text-text-muted text-center">타일러의 타이르는 운세 · v3.0</p>
       </div>
-
-      {result && (
-        <>
-          <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-4">
-            <h3 className="font-bold text-purple-glow text-sm">🐾 띠 (12지신)</h3>
-            <div className="text-center">
-              <p className="text-4xl">{result.animal.animal.split(" ")[0]}</p>
-              <p className="text-lg font-bold mt-2">{result.animal.animal}</p>
-              <p className="text-xs text-text-secondary mt-1">
-                오행: <span style={{ color: ELEMENT_COLORS[result.animal.element] }}>{result.animal.element}({result.animal.element === "목" ? "木" : result.animal.element === "화" ? "火" : result.animal.element === "토" ? "土" : result.animal.element === "금" ? "金" : "水"})</span>
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
-            <h3 className="font-bold text-purple-glow text-sm">⭐ 별자리</h3>
-            <div className="text-center">
-              <p className="text-lg font-bold">{result.zodiac.name}</p>
-              <p className="text-xs text-text-secondary">{result.zodiac.period} · {result.zodiac.element} 원소</p>
-              <p className="text-sm text-gold mt-2">{result.zodiac.keyword}</p>
-            </div>
-          </div>
-
-          <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
-            <h3 className="font-bold text-purple-glow text-sm">🔢 수비학 — 생명수</h3>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-gold">{result.lifePath}</p>
-              <p className="text-sm text-text-secondary mt-2">
-                {lifePathMeaning[result.lifePath] || "특별한 에너지를 가진 숫자"}
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-mystic-card border border-gold/20 rounded-2xl p-5 text-center">
-            <p className="text-gold text-sm">💡 콜잇도사의 한마디</p>
-            <p className="text-xs text-text-secondary mt-2 leading-relaxed">
-              &ldquo;{result.animal.animal.split(" ")[1]}띠에 {result.zodiac.name}, 생명수 {result.lifePath}의 조합이시군요!
-              {result.lifePath <= 3 ? " 창의적이고 표현력이 뛰어난 분입니다." :
-                result.lifePath <= 6 ? " 안정감 있고 책임감 강한 분입니다." :
-                " 깊은 통찰력과 영적 감각을 가진 분입니다."}
-              더 자세한 사주 분석은 Phase 2에서 만나요!&rdquo;
-            </p>
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function TarotPage() {
-  const [picked, setPicked] = useState<number | null>(null);
-  const [isReversed, setIsReversed] = useState(false);
-
-  const pickCard = () => {
-    const idx = Math.floor(Math.random() * 22);
-    const reversed = Math.random() > 0.7;
-    setPicked(idx);
-    setIsReversed(reversed);
-  };
+    );
+  }
 
   return (
-    <div className="space-y-6 py-4">
+    <div className="space-y-4 py-4">
+      {/* 헤더 */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gold">🃏 타로 카드</h2>
-        <p className="text-text-muted text-xs mt-1">카드를 뽑아보세요</p>
+        <h2 className="text-lg font-bold text-gold">🔮 {profile.name || "익명"}님의 통합 운세</h2>
+        <p className="text-text-muted text-xs">{dateStr} · 일진: {ganji.gan.name}{ganji.ji.name}({ganji.gan.hanja}{ganji.ji.name === "자" ? "子" : ganji.ji.name === "축" ? "丑" : ganji.ji.name === "인" ? "寅" : ganji.ji.name === "묘" ? "卯" : ganji.ji.name === "진" ? "辰" : ganji.ji.name === "사" ? "巳" : ganji.ji.name === "오" ? "午" : ganji.ji.name === "미" ? "未" : ganji.ji.name === "신" ? "申" : ganji.ji.name === "유" ? "酉" : ganji.ji.name === "술" ? "戌" : "亥"})</p>
+        <button onClick={() => setShowResult(false)} className="text-[10px] text-purple-glow mt-1">✏️ 수정</button>
       </div>
 
-      <div className="text-center">
-        <button onClick={pickCard}
-          className="px-8 py-4 bg-gradient-to-r from-purple-glow to-purple-dim rounded-2xl font-bold hover:opacity-90 transition text-lg">
-          🃏 카드 뽑기
-        </button>
+      {/* 오늘의 기운 */}
+      <div className="bg-mystic-card border border-gold/30 rounded-2xl p-4">
+        <p className="text-gold text-sm font-bold mb-2">☯️ 오늘의 기운</p>
+        <p className="text-xs text-text-secondary leading-relaxed">
+          {ganji.gan.keyword.split("—")[0].trim()}({ganji.gan.hanja}{ganji.gan.element}) 위에 {JIJI.find(j => j === ganji.ji)?.animal || ""}의 기운이 흐르는 날. {elementRelation}의 흐름으로 {ganElement === "금" ? "냉철한 판단력" : ganElement === "수" ? "지혜로운 직관" : ganElement === "목" ? "성장의 에너지" : ganElement === "화" ? "열정의 불꽃" : "안정의 대지"}이 빛나는 하루입니다.
+        </p>
       </div>
 
-      {picked !== null && (
-        <div className="bg-mystic-card border border-purple-glow/30 rounded-2xl p-6 text-center space-y-4">
-          <p className="text-6xl">{isReversed ? "🔄" : "✨"}</p>
-          <div>
-            <p className="text-xs text-text-muted">{isReversed ? "역방향" : "정방향"} · {TAROT_MAJOR[picked].num}번</p>
-            <h3 className="text-2xl font-bold text-gold mt-1">{TAROT_MAJOR[picked].name}</h3>
-            <p className="text-sm text-text-secondary">{TAROT_MAJOR[picked].eng}</p>
+      {/* 나의 운세 (내 띠) */}
+      {animal && (
+        <div className="bg-mystic-card border border-purple-glow/30 rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="font-bold text-sm">⭐ 나의 운세 — {animal.animal}</p>
+            <span className="text-gold text-sm font-bold">{getAnimalDailyScore(myAnimalIdx)}%</span>
           </div>
-          <div className="bg-mystic/50 rounded-xl p-4">
-            <p className="text-sm text-text-primary">
-              {isReversed ? TAROT_MAJOR[picked].reverse : TAROT_MAJOR[picked].keyword}
-            </p>
+          <div className="grid grid-cols-4 gap-2 mb-2">
+            {[{l:"재물",s:((getAnimalDailyScore(myAnimalIdx)*0.95)|0)},{l:"건강",s:((getAnimalDailyScore(myAnimalIdx)*1.02)|0)},{l:"사랑",s:((getAnimalDailyScore(myAnimalIdx)*0.98)|0)},{l:"행운",s:((getAnimalDailyScore(myAnimalIdx)*1.05)|0)}].map(x => (
+              <div key={x.l} className="text-center bg-mystic/50 rounded-lg p-1.5">
+                <p className="text-[10px] text-text-muted">{x.l}</p>
+                <p className="text-xs font-bold text-gold">{Math.min(x.s, 99)}</p>
+              </div>
+            ))}
           </div>
-          <p className="text-xs text-text-muted">
-            {isReversed
-              ? "역방향 카드는 에너지가 막혀있음을 의미합니다. 내면을 돌아보세요."
-              : "정방향 카드는 에너지가 순조롭게 흐르고 있음을 의미합니다."}
+        </div>
+      )}
+
+      {/* 통합 분석 */}
+      <div className="space-y-3">
+        {/* 명리학 */}
+        {animal && (
+          <div className="bg-mystic-card border border-border rounded-2xl p-4">
+            <p className="font-bold text-sm text-purple-glow mb-2">📜 명리학</p>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="bg-mystic/50 rounded-lg p-2">
+                <p className="text-text-muted">띠</p>
+                <p className="font-bold">{animal.animal}</p>
+              </div>
+              <div className="bg-mystic/50 rounded-lg p-2">
+                <p className="text-text-muted">오행</p>
+                <p className="font-bold" style={{color: ELEMENT_COLORS[animal.element]}}>{animal.element}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 타로 */}
+        <div className="bg-mystic-card border border-border rounded-2xl p-4">
+          <p className="font-bold text-sm text-purple-glow mb-2">🃏 타로 3장</p>
+          <div className="grid grid-cols-3 gap-2">
+            {tarot.map((t, i) => (
+              <div key={i} className="bg-mystic/50 rounded-lg p-2 text-center">
+                <p className="text-[10px] text-text-muted">{["과거","현재","미래"][i]}</p>
+                <p className="text-xs font-bold mt-1">{t.name}</p>
+                <p className="text-[10px] text-gold mt-0.5">{t.keyword.split(",")[0]}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 수비학 + 별자리 */}
+        <div className="grid grid-cols-2 gap-3">
+          {lifePath && (
+            <div className="bg-mystic-card border border-border rounded-2xl p-4 text-center">
+              <p className="text-[10px] text-text-muted">🔢 생명수</p>
+              <p className="text-2xl font-bold text-gold">{lifePath}</p>
+            </div>
+          )}
+          {zodiac && (
+            <div className="bg-mystic-card border border-border rounded-2xl p-4 text-center">
+              <p className="text-[10px] text-text-muted">⭐ 별자리</p>
+              <p className="text-sm font-bold">{zodiac.name}</p>
+              <p className="text-[10px] text-gold">{zodiac.keyword}</p>
+            </div>
+          )}
+        </div>
+
+        {/* 인상학 */}
+        <div className="bg-mystic-card border border-border rounded-2xl p-4">
+          <p className="font-bold text-sm text-purple-glow mb-2">👤 인상학 — 오행 얼굴형</p>
+          <div className="space-y-1.5">
+            {PHYSIOGNOMY.faceShapes.items.map((f: { element: string; shape: string; personality: string }) => (
+              <div key={f.element} className="flex items-center gap-2 text-xs">
+                <span>{f.element.includes("목")?"🌳":f.element.includes("화")?"🔥":f.element.includes("토")?"🏔️":f.element.includes("금")?"⚔️":"💧"}</span>
+                <span className="font-medium w-20">{f.element}</span>
+                <span className="text-text-secondary">{f.shape}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 행운 요소 */}
+        <div className="bg-mystic-card border border-gold/20 rounded-2xl p-4">
+          <p className="font-bold text-sm text-gold mb-2">🍀 오늘의 행운 요소</p>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div><p className="text-[10px] text-text-muted">행운색</p><p className="text-sm font-bold text-gold">{lucky.color}</p></div>
+            <div><p className="text-[10px] text-text-muted">행운숫자</p><p className="text-sm font-bold text-gold">{lucky.number}</p></div>
+            <div><p className="text-[10px] text-text-muted">행운방위</p><p className="text-sm font-bold text-gold">{lucky.direction}</p></div>
+          </div>
+        </div>
+
+        {/* 최면심리학 자기암시 */}
+        <div className="bg-mystic-card border border-purple-glow/20 rounded-2xl p-4 text-center">
+          <p className="text-purple-glow text-sm font-bold">🧠 오늘의 자기 암시</p>
+          <p className="text-xs text-text-secondary mt-2 leading-relaxed italic">
+            &ldquo;나는 오늘 {lucky.color} 빛처럼 빛나는 하루를 보낸다. {zodiac ? zodiac.keyword.split(",")[0].trim() + "의 기운이 나를 이끈다." : "우주의 기운이 나를 이끈다."} 모든 것이 잘 풀린다.&rdquo;
           </p>
         </div>
-      )}
+      </div>
 
-      <div className="bg-mystic-card border border-border rounded-2xl p-5">
-        <h3 className="font-bold text-sm text-purple-glow mb-3">📖 메이저 아르카나 22장</h3>
-        <div className="grid grid-cols-2 gap-2 max-h-[400px] overflow-y-auto">
-          {TAROT_MAJOR.map((t) => (
-            <div key={t.num} className="bg-mystic/50 border border-border rounded-lg p-2 text-center">
-              <p className="text-[10px] text-text-muted">{t.num}</p>
-              <p className="text-xs font-bold">{t.name}</p>
-              <p className="text-[10px] text-text-secondary">{t.keyword}</p>
-            </div>
-          ))}
+      {/* 12띠 오늘의 운세 (공유용) */}
+      <div className="bg-mystic-card border border-border rounded-2xl p-4">
+        <p className="font-bold text-sm text-gold mb-3">📋 오늘의 12띠 운세</p>
+        <div className="space-y-3">
+          {JIJI.map((ji, idx) => {
+            const score = getAnimalDailyScore(idx);
+            const isMe = idx === myAnimalIdx;
+            return (
+              <div key={ji.name} className={`rounded-xl p-3 ${isMe ? "bg-gold/10 border border-gold/30" : "bg-mystic/50"}`}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-sm font-bold">{ji.animal} {isMe && "⭐"}</span>
+                  <span className={`text-sm font-bold ${score >= 80 ? "text-gold" : score >= 50 ? "text-text-secondary" : "text-fire"}`}>{score}%</span>
+                </div>
+                <p className="text-[10px] text-text-secondary">
+                  재물 {Math.min(((score*0.95)|0),99)} · 건강 {Math.min(((score*1.02)|0),99)} · 사랑 {Math.min(((score*0.98)|0),99)} · 행운 {Math.min(((score*1.05)|0),99)}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      <p className="text-[10px] text-text-muted text-center pb-4">타일러의 타이르는 운세 · v3.0</p>
     </div>
   );
 }
 
-function MonthlyPage() {
-  const currentMonth = new Date().getMonth() + 1;
+// ========== 채팅 탭 ==========
+function ChatTab() {
   return (
-    <div className="space-y-6 py-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gold">📅 2026 병오년 월별 운세</h2>
-        <p className="text-text-muted text-xs mt-1">태양(丙) + 말(午) = 화기 폭발의 해</p>
-      </div>
-
-      <div className="space-y-3">
-        {MONTHLY_2026.map((m) => (
-          <div key={m.month}
-            className={`bg-mystic-card border rounded-2xl p-4 transition-all ${
-              m.month === currentMonth ? "border-gold/50 bg-mystic-card-hover" : "border-border"
-            }`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
-                  m.month === currentMonth ? "bg-gold/20 text-gold" : "bg-mystic text-text-secondary"
-                }`}>
-                  {m.month}월
-                </div>
-                <div>
-                  <p className="text-sm font-medium">
-                    {m.ganji}월 {m.month === currentMonth && <span className="text-gold text-xs">← 이번 달</span>}
-                  </p>
-                  <p className="text-xs text-text-secondary">{m.keyword}</p>
-                </div>
-              </div>
-              <div className="flex gap-0.5">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className={`w-2 h-2 rounded-full ${i < m.luck ? "bg-gold" : "bg-border"}`} />
-                ))}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FacePage() {
-  return (
-    <div className="space-y-6 py-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold text-gold">👤 인상학</h2>
-        <p className="text-text-muted text-xs mt-1">얼굴로 보는 운명 — 人相學</p>
-      </div>
-
-      {/* 오악 */}
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
-        <h3 className="font-bold text-sm text-purple-glow">🏔️ 오악(五岳) — 얼굴의 5산</h3>
-        <p className="text-xs text-text-secondary">얼굴의 5가지 핵심 부위로 운세를 봅니다</p>
-        {PHYSIOGNOMY.oAk.map((o) => (
-          <div key={o.name} className="flex items-center justify-between bg-mystic/50 rounded-lg p-3">
-            <div>
-              <p className="text-sm font-medium">{o.name}</p>
-              <p className="text-[10px] text-text-muted">위치: {o.position}</p>
-            </div>
-            <p className="text-xs text-gold">{o.meaning}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* 삼정 */}
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
-        <h3 className="font-bold text-sm text-purple-glow">📐 삼정(三停) — 얼굴 3등분</h3>
-        {PHYSIOGNOMY.samJeong.map((s) => (
-          <div key={s.name} className="bg-mystic/50 rounded-lg p-3">
-            <div className="flex justify-between items-center">
-              <p className="text-sm font-bold">{s.name}</p>
-              <span className="text-[10px] px-2 py-0.5 bg-gold/10 text-gold rounded-full">{s.period}</span>
-            </div>
-            <p className="text-xs text-text-muted mt-1">{s.area}</p>
-            <p className="text-xs text-text-secondary mt-0.5">{s.meaning}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* 십이궁 */}
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
-        <h3 className="font-bold text-sm text-purple-glow">🏛️ 십이궁(十二宮)</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {PHYSIOGNOMY.twelveGung.map((g) => (
-            <div key={g.name} className="bg-mystic/50 rounded-lg p-2 text-center">
-              <p className="text-xs font-bold">{g.name}</p>
-              <p className="text-[10px] text-text-muted">{g.position}</p>
-              <p className="text-[10px] text-gold mt-0.5">{g.meaning}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 오행별 얼굴형 */}
-      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
-        <h3 className="font-bold text-sm text-purple-glow">🎭 오행별 얼굴형</h3>
-        {PHYSIOGNOMY.faceByElement.map((f) => (
-          <div key={f.element} className="flex items-center gap-3 bg-mystic/50 rounded-lg p-3">
-            <span className="text-2xl">{f.element.includes("목") ? "🌳" : f.element.includes("화") ? "🔥" : f.element.includes("토") ? "🏔️" : f.element.includes("금") ? "⚔️" : "💧"}</span>
-            <div>
-              <p className="text-sm font-medium">{f.element} — {f.shape}</p>
-              <p className="text-xs text-text-secondary">{f.feature}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="bg-mystic-card border border-gold/20 rounded-2xl p-5 text-center">
-        <p className="text-gold text-sm">💡 콜잇도사의 한마디</p>
-        <p className="text-xs text-text-secondary mt-2 leading-relaxed">
-          &ldquo;인상학은 타고난 운명의 지도입니다. 얼굴의 오악과 삼정, 십이궁을 통해 과거·현재·미래의 흐름을 읽을 수 있습니다. 사주와 인상을 함께 보면 더욱 정확한 운세를 볼 수 있죠.&rdquo;
+    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+      <span className="text-6xl">💬</span>
+      <h2 className="text-xl font-bold text-gold">타이르는 타일러 도사</h2>
+      <p className="text-text-secondary text-sm text-center px-8">
+        AI 도사와 실시간 대화 상담
+      </p>
+      <div className="bg-mystic-card border border-border rounded-2xl p-6 max-w-sm text-center">
+        <p className="text-purple-glow text-sm font-bold mb-2">🚧 Phase 2 준비 중</p>
+        <p className="text-xs text-text-muted leading-relaxed">
+          Claude API 연동 후 실시간 상담이 가능합니다.<br/>
+          사주·타로·인상학·최면심리학 기반<br/>
+          맞춤형 AI 상담을 제공할 예정입니다.
         </p>
       </div>
     </div>
   );
 }
 
-export default function Home() {
-  const [view, setView] = useState<View>("home");
+// ========== 마이페이지 ==========
+function MyPage({ profile, setProfile, setTab }: { profile: Profile; setProfile: (p: Profile) => void; setTab: (t: Tab) => void }) {
+  const [history, setHistory] = useState<{date:string;type:string}[]>([]);
 
-  const renderView = () => {
-    switch (view) {
-      case "home": return <HomePage />;
-      case "today": return <TodayPage />;
-      case "my": return <MyFortunePage />;
-      case "tarot": return <TarotPage />;
-      case "monthly": return <MonthlyPage />;
-      case "face": return <FacePage />;
-    }
+  useEffect(() => {
+    const h = localStorage.getItem("tyler_history");
+    if (h) setHistory(JSON.parse(h));
+  }, []);
+
+  const clearData = () => {
+    localStorage.removeItem("tyler_profile");
+    localStorage.removeItem("tyler_history");
+    setProfile({ name: "", nameHanja: "", year: "", month: "", day: "", hour: "" });
+    setHistory([]);
   };
+
+  return (
+    <div className="space-y-6 py-4">
+      <div className="text-center">
+        <h2 className="text-xl font-bold text-gold">👤 마이페이지</h2>
+      </div>
+
+      {profile.name ? (
+        <div className="bg-mystic-card border border-border rounded-2xl p-5">
+          <h3 className="font-bold text-sm text-purple-glow mb-3">내 프로필</h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between"><span className="text-text-muted">이름</span><span>{profile.name}</span></div>
+            {profile.nameHanja && <div className="flex justify-between"><span className="text-text-muted">한자</span><span>{profile.nameHanja}</span></div>}
+            <div className="flex justify-between"><span className="text-text-muted">생년월일</span><span>{profile.year}.{profile.month}.{profile.day}</span></div>
+            {profile.hour && <div className="flex justify-between"><span className="text-text-muted">태어난 시</span><span>{profile.hour}시</span></div>}
+          </div>
+          <button onClick={() => setTab("root")} className="w-full mt-3 py-2 bg-purple-glow/20 text-purple-glow rounded-lg text-xs">✏️ 수정하기</button>
+        </div>
+      ) : (
+        <div className="bg-mystic-card border border-border rounded-2xl p-5 text-center">
+          <p className="text-text-muted text-sm">아직 프로필이 없습니다</p>
+          <button onClick={() => setTab("root")} className="mt-3 px-6 py-2 bg-gold/20 text-gold rounded-lg text-xs">근본 입력하기</button>
+        </div>
+      )}
+
+      <div className="bg-mystic-card border border-border rounded-2xl p-5">
+        <h3 className="font-bold text-sm text-purple-glow mb-3">📜 과거 기록</h3>
+        {history.length > 0 ? (
+          <div className="space-y-2">
+            {history.slice(-10).reverse().map((h, i) => (
+              <div key={i} className="flex justify-between text-xs bg-mystic/50 rounded-lg p-2">
+                <span className="text-text-muted">{h.date}</span>
+                <span>{h.type}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-text-muted text-center">기록이 없습니다</p>
+        )}
+      </div>
+
+      <button onClick={clearData} className="w-full py-2 text-fire/60 text-xs hover:text-fire transition">데이터 초기화</button>
+    </div>
+  );
+}
+
+// ========== 메인 ==========
+export default function Home() {
+  const [tab, setTab] = useState<Tab>("root");
+  const [profile, setProfile] = useState<Profile>({ name: "", nameHanja: "", year: "", month: "", day: "", hour: "" });
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("tyler_profile");
+    if (saved) setProfile(JSON.parse(saved));
+    setLoaded(true);
+  }, []);
+
+  if (!loaded) return null;
+
+  const saved = !!localStorage.getItem("tyler_profile");
 
   return (
     <div className="min-h-screen relative">
       <Stars />
-      <Nav view={view} setView={setView} />
-      <main className="relative z-10 max-w-lg mx-auto px-4 pb-20 md:pb-4">
-        {renderView()}
+      <BottomNav tab={tab} setTab={setTab} />
+      <main className="relative z-10 max-w-lg mx-auto px-4 pb-24">
+        {tab === "root" && <RootTab profile={profile} setProfile={setProfile} saved={saved} />}
+        {tab === "chat" && <ChatTab />}
+        {tab === "my" && <MyPage profile={profile} setProfile={setProfile} setTab={setTab} />}
       </main>
     </div>
   );

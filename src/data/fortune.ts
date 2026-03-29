@@ -1,110 +1,306 @@
-// 천간
+// ─── 천간 (10 Heavenly Stems) ───
 export const CHEONGAN = [
-  { name: "갑", hanja: "甲", element: "목", yinyang: "양", keyword: "큰 나무 — 리더십, 개척" },
-  { name: "을", hanja: "乙", element: "목", yinyang: "음", keyword: "풀·꽃 — 유연함, 적응" },
-  { name: "병", hanja: "丙", element: "화", yinyang: "양", keyword: "태양 — 열정, 카리스마" },
-  { name: "정", hanja: "丁", element: "화", yinyang: "음", keyword: "촛불 — 따뜻함, 예술성" },
-  { name: "무", hanja: "戊", element: "토", yinyang: "양", keyword: "큰 산 — 안정, 신뢰" },
-  { name: "기", hanja: "己", element: "토", yinyang: "음", keyword: "논밭 — 포용, 실용" },
-  { name: "경", hanja: "庚", element: "금", yinyang: "양", keyword: "바위 — 결단, 의리" },
-  { name: "신", hanja: "辛", element: "금", yinyang: "음", keyword: "보석 — 예민, 완벽주의" },
-  { name: "임", hanja: "壬", element: "수", yinyang: "양", keyword: "큰 바다 — 지혜, 포용" },
-  { name: "계", hanja: "癸", element: "수", yinyang: "음", keyword: "이슬 — 직관, 영감" },
+  { name: "갑", hanja: "甲", element: "목", yinyang: "양", symbol: "큰 나무", keyword: "리더십, 개척, 정직, 고집",
+    personality: "하늘을 향해 뻗는 큰 나무처럼, 목표를 향한 직진 본능이 강합니다. 타고난 리더이자 개척자.",
+    career: "CEO, 창업가, 군인, 스포츠 선수" },
+  { name: "을", hanja: "乙", element: "목", yinyang: "음", symbol: "풀·꽃", keyword: "유연함, 적응, 예술성, 인내",
+    personality: "바람에 흔들려도 꺾이지 않는 풀처럼, 어떤 환경에서도 적응하며 피어나는 생명력을 지녔습니다.",
+    career: "디자이너, 예술가, 외교관, 상담사" },
+  { name: "병", hanja: "丙", element: "화", yinyang: "양", symbol: "태양", keyword: "열정, 카리스마, 화려, 급함",
+    personality: "태양처럼 온 세상을 비추는 밝고 뜨거운 에너지! 주변을 활기차게 만드는 천생 분위기 메이커.",
+    career: "연예인, 정치인, 마케터, 강사" },
+  { name: "정", hanja: "丁", element: "화", yinyang: "음", symbol: "촛불", keyword: "따뜻함, 예술성, 섬세, 예민",
+    personality: "촛불처럼 은은하게 주변을 밝히는 따뜻한 마음의 소유자. 감수성이 풍부하고 예술적 재능이 뛰어납니다.",
+    career: "작가, 음악가, 요리사, 심리상담사" },
+  { name: "무", hanja: "戊", element: "토", yinyang: "양", symbol: "큰 산", keyword: "안정, 신뢰, 포용, 우직",
+    personality: "태산처럼 듬직하고 흔들림 없는 신뢰의 아이콘. 주변 사람들의 든든한 버팀목 역할을 합니다.",
+    career: "공무원, 부동산, 건축가, 경영관리" },
+  { name: "기", hanja: "己", element: "토", yinyang: "음", symbol: "논밭", keyword: "포용, 실용, 세심, 걱정",
+    personality: "만물을 키워내는 논밭처럼, 사람을 품고 돌보는 넓은 마음. 실용적이고 알뜰한 살림꾼.",
+    career: "교사, 농업, 서비스업, 사회복지사" },
+  { name: "경", hanja: "庚", element: "금", yinyang: "양", symbol: "바위·쇠", keyword: "결단, 의리, 강직, 냉정",
+    personality: "쇠처럼 단단한 의지와 칼같은 결단력의 소유자. 한번 맺은 인연은 끝까지 책임지는 의리파.",
+    career: "군인, 검찰, 외과의사, 엔지니어" },
+  { name: "신", hanja: "辛", element: "금", yinyang: "음", symbol: "보석", keyword: "예민, 완벽주의, 미적감각, 날카로움",
+    personality: "다듬어진 보석처럼 빛나는 미적 감각과 완벽주의. 디테일에 강하지만 상처받기 쉬운 유리 멘탈도.",
+    career: "보석상, 편집자, 프로그래머, 감정사" },
+  { name: "임", hanja: "壬", element: "수", yinyang: "양", symbol: "큰 바다", keyword: "지혜, 포용, 자유, 방랑",
+    personality: "모든 것을 품는 바다처럼, 넓은 시야와 깊은 지혜를 가졌습니다. 자유를 사랑하는 영혼.",
+    career: "학자, 철학자, 무역, 항해사" },
+  { name: "계", hanja: "癸", element: "수", yinyang: "음", symbol: "이슬·비", keyword: "직관, 영감, 감성, 비밀",
+    personality: "이슬처럼 맑고 투명한 직관력! 보이지 않는 것을 느끼는 영적 감각의 소유자.",
+    career: "점술가, 심리학자, 연구원, 예술가" },
 ];
 
-// 지지 (12지신)
+// ─── 지지 (12 Earthly Branches / 12지신) ───
 export const JIJI = [
-  { name: "자", animal: "🐀 쥐", element: "수", month: 11 },
-  { name: "축", animal: "🐂 소", element: "토", month: 12 },
-  { name: "인", animal: "🐅 호랑이", element: "목", month: 1 },
-  { name: "묘", animal: "🐇 토끼", element: "목", month: 2 },
-  { name: "진", animal: "🐉 용", element: "토", month: 3 },
-  { name: "사", animal: "🐍 뱀", element: "화", month: 4 },
-  { name: "오", animal: "🐴 말", element: "화", month: 5 },
-  { name: "미", animal: "🐑 양", element: "토", month: 6 },
-  { name: "신", animal: "🐵 원숭이", element: "금", month: 7 },
-  { name: "유", animal: "🐔 닭", element: "금", month: 8 },
-  { name: "술", animal: "🐕 개", element: "토", month: 9 },
-  { name: "해", animal: "🐷 돼지", element: "수", month: 10 },
+  { name: "자", hanja: "子", animal: "🐀 쥐", element: "수", yinyang: "양", time: "23:00-01:00", month: 11,
+    personality: "영리하고 눈치 빠른 전략가. 작은 기회도 놓치지 않는 날카로운 감각.",
+    story: "자시(子時)는 하루의 시작. 어둠 속에서도 길을 찾는 쥐처럼, 어떤 상황에서도 살아남는 생존력의 상징입니다. 12지신 중 가장 먼저 옥황상제 앞에 도착한 영리함!" },
+  { name: "축", hanja: "丑", animal: "🐂 소", element: "토", yinyang: "음", time: "01:00-03:00", month: 12,
+    personality: "성실하고 끈기 있는 노력파. 느리지만 확실한 결과를 만드는 힘.",
+    story: "축시(丑時)는 새벽의 고요함. 묵묵히 밭을 가는 소처럼, 꾸준한 노력으로 반드시 목표를 이루는 대기만성형. 쥐에게 속아 2등을 했지만 원망하지 않는 너그러움!" },
+  { name: "인", hanja: "寅", animal: "🐅 호랑이", element: "목", yinyang: "양", time: "03:00-05:00", month: 1,
+    personality: "용감하고 카리스마 넘치는 왕. 정의감이 강하고 리더십이 타고남.",
+    story: "인시(寅時)는 동이 트기 전 어둠. 산중의 왕 호랑이처럼 당당하고 위엄있는 존재감! 한번 으르렁하면 백수가 엎드리는 타고난 리더." },
+  { name: "묘", hanja: "卯", animal: "🐇 토끼", element: "목", yinyang: "음", time: "05:00-07:00", month: 2,
+    personality: "똑똑하고 재치있는 인기인. 예술적 감각과 사교성이 뛰어남.",
+    story: "묘시(卯時)는 해가 뜨는 시간. 달에서 방아 찧는 토끼처럼 꿈과 낭만이 있고, 위기에서 재빠르게 빠져나가는 센스!" },
+  { name: "진", hanja: "辰", animal: "🐉 용", element: "토", yinyang: "양", time: "07:00-09:00", month: 3,
+    personality: "야망 크고 비범한 존재. 12지신 중 유일한 상상의 동물, 무한한 가능성.",
+    story: "진시(辰時)는 활동 시작의 시간. 하늘을 나는 용처럼, 남들이 상상도 못하는 스케일의 꿈을 꾸고 실현하는 자! 왕이나 위인의 띠로 불립니다." },
+  { name: "사", hanja: "巳", animal: "🐍 뱀", element: "화", yinyang: "음", time: "09:00-11:00", month: 4,
+    personality: "지혜롭고 신비로운 전략가. 냉정한 판단력과 깊은 통찰력.",
+    story: "사시(巳時)는 태양이 높이 뜨는 시간. 뱀은 '작은 용'이라 불리며, 허물을 벗고 새로 태어나는 변신과 재생의 상징입니다." },
+  { name: "오", hanja: "午", animal: "🐴 말", element: "화", yinyang: "양", time: "11:00-13:00", month: 5,
+    personality: "자유롭고 열정적인 모험가. 에너지가 넘치고 활동적.",
+    story: "오시(午時)는 태양이 정점에 오른 정오! 끝없는 들판을 질주하는 말처럼, 뜨거운 열정과 자유로운 영혼의 상징. 2026년은 바로 말의 해(午年)!" },
+  { name: "미", hanja: "未", animal: "🐑 양", element: "토", yinyang: "음", time: "13:00-15:00", month: 6,
+    personality: "온화하고 예술적인 감성파. 따뜻한 마음씨와 희생정신.",
+    story: "미시(未時)는 오후의 나른함. 평화로운 양처럼, 다툼보다 화합을 추구하는 평화주의자. 예술과 아름다움을 사랑합니다." },
+  { name: "신", hanja: "申", animal: "🐵 원숭이", element: "금", yinyang: "양", time: "15:00-17:00", month: 7,
+    personality: "재주 많고 영리한 만능 엔터테이너. 임기응변의 달인.",
+    story: "신시(申時)는 오후의 활력. 72가지 변신을 하는 손오공처럼, 어떤 상황에서도 빠져나가는 재치와 다재다능함!" },
+  { name: "유", hanja: "酉", animal: "🐔 닭", element: "금", yinyang: "음", time: "17:00-19:00", month: 8,
+    personality: "꼼꼼하고 성실한 완벽주의자. 시간 관념이 철저함.",
+    story: "유시(酉時)는 해질녘. 새벽을 알리는 닭처럼, 시간과 약속을 철저히 지키는 성실함의 상징. 화려한 깃털처럼 패션 감각도 뛰어납니다!" },
+  { name: "술", hanja: "戌", animal: "🐕 개", element: "토", yinyang: "양", time: "19:00-21:00", month: 9,
+    personality: "충성스럽고 정의로운 수호자. 의리와 신뢰의 아이콘.",
+    story: "술시(戌時)는 어둠이 찾아오는 시간. 주인을 지키는 개처럼, 한번 맺은 인연은 끝까지 지키는 의리의 사나이(사나녀). 정의감이 투철!" },
+  { name: "해", hanja: "亥", animal: "🐷 돼지", element: "수", yinyang: "음", time: "21:00-23:00", month: 10,
+    personality: "복덕 많고 낙천적인 행운아. 재물운이 강하고 인복이 넘침.",
+    story: "해시(亥時)는 하루의 마무리. 복을 상징하는 돼지처럼, 타고난 재물운과 사람 복! 순수하고 낙천적인 성격으로 주변에 행복을 전파합니다." },
 ];
 
-// 오행 색상
+// ─── 오행 색상 ───
 export const ELEMENT_COLORS: Record<string, string> = {
   "목": "#27ae60", "화": "#e74c3c", "토": "#d4a437", "금": "#bdc3c7", "수": "#3498db",
 };
 
-// 타로 메이저 아르카나
+// ─── 오행 상세 ───
+export const FIVE_ELEMENTS: Record<string, { hanja: string; color: string; season: string; direction: string; organ: string; taste: string; emotion: string }> = {
+  "목": { hanja: "木", color: "청색/녹색", season: "봄", direction: "동", organ: "간장", taste: "신맛", emotion: "분노" },
+  "화": { hanja: "火", color: "적색", season: "여름", direction: "남", organ: "심장", taste: "쓴맛", emotion: "기쁨" },
+  "토": { hanja: "土", color: "황색", season: "환절기", direction: "중앙", organ: "비장", taste: "단맛", emotion: "사려" },
+  "금": { hanja: "金", color: "백색", season: "가을", direction: "서", organ: "폐장", taste: "매운맛", emotion: "슬픔" },
+  "수": { hanja: "水", color: "흑색", season: "겨울", direction: "북", organ: "신장", taste: "짠맛", emotion: "두려움" },
+};
+
+// ─── 타로 메이저 아르카나 (확장) ───
 export const TAROT_MAJOR = [
-  { num: 0, name: "바보", eng: "The Fool", keyword: "새 시작, 모험, 자유", reverse: "무모, 위험" },
-  { num: 1, name: "마법사", eng: "The Magician", keyword: "의지, 창조, 능력", reverse: "속임, 미숙" },
-  { num: 2, name: "여사제", eng: "High Priestess", keyword: "직관, 비밀, 지혜", reverse: "숨김, 불안" },
-  { num: 3, name: "여황제", eng: "The Empress", keyword: "풍요, 모성, 창조", reverse: "과잉, 집착" },
-  { num: 4, name: "황제", eng: "The Emperor", keyword: "권위, 안정, 리더", reverse: "독재, 경직" },
-  { num: 5, name: "교황", eng: "Hierophant", keyword: "전통, 가르침, 신뢰", reverse: "독단, 형식" },
-  { num: 6, name: "연인", eng: "The Lovers", keyword: "사랑, 선택, 조화", reverse: "갈등, 불화" },
-  { num: 7, name: "전차", eng: "The Chariot", keyword: "승리, 의지, 전진", reverse: "폭주, 방향상실" },
-  { num: 8, name: "힘", eng: "Strength", keyword: "용기, 인내, 내면의 힘", reverse: "약함, 자기의심" },
-  { num: 9, name: "은둔자", eng: "The Hermit", keyword: "성찰, 지혜, 고독", reverse: "고립, 외면" },
-  { num: 10, name: "운명의 수레바퀴", eng: "Wheel of Fortune", keyword: "전환, 운명, 기회", reverse: "불운, 저항" },
-  { num: 11, name: "정의", eng: "Justice", keyword: "공정, 균형, 결과", reverse: "불공정, 회피" },
-  { num: 12, name: "매달린 사람", eng: "Hanged Man", keyword: "희생, 관점전환", reverse: "지연, 무의미" },
-  { num: 13, name: "죽음", eng: "Death", keyword: "변화, 끝과 시작", reverse: "저항, 정체" },
-  { num: 14, name: "절제", eng: "Temperance", keyword: "균형, 조화, 인내", reverse: "극단, 불균형" },
-  { num: 15, name: "악마", eng: "The Devil", keyword: "유혹, 집착, 속박", reverse: "해방, 각성" },
-  { num: 16, name: "탑", eng: "The Tower", keyword: "파괴, 급변, 각성", reverse: "두려움, 회피" },
-  { num: 17, name: "별", eng: "The Star", keyword: "희망, 영감, 치유", reverse: "절망, 단절" },
-  { num: 18, name: "달", eng: "The Moon", keyword: "환상, 불안, 직관", reverse: "혼란 해소" },
-  { num: 19, name: "태양", eng: "The Sun", keyword: "성공, 기쁨, 활력", reverse: "지연된 성공" },
-  { num: 20, name: "심판", eng: "Judgement", keyword: "부활, 각성, 소명", reverse: "후회, 미련" },
-  { num: 21, name: "세계", eng: "The World", keyword: "완성, 성취, 통합", reverse: "미완, 지연" },
+  { num: 0, name: "바보", eng: "The Fool", keyword: "새 시작, 모험, 자유, 순수한 가능성", reverse: "무모함, 부주의, 위험한 도박",
+    astrology: "천왕성", elementTarot: "바람", description: "절벽 끝에서도 미소짓는 바보. 두려움 없는 첫 발걸음이 위대한 여정의 시작입니다." },
+  { num: 1, name: "마법사", eng: "The Magician", keyword: "의지, 창조, 능력, 무한한 잠재력", reverse: "속임수, 미숙함, 재능 낭비",
+    astrology: "수성", elementTarot: "바람", description: "하늘과 땅을 잇는 마법사. 당신이 가진 모든 것을 활용할 때가 왔습니다." },
+  { num: 2, name: "여사제", eng: "High Priestess", keyword: "직관, 비밀, 지혜, 내면의 목소리", reverse: "숨겨진 진실, 불안, 직감 무시",
+    astrology: "달", elementTarot: "물", description: "달빛 아래 앉은 여사제. 논리보다 직감을 따르세요, 답은 이미 당신 안에 있습니다." },
+  { num: 3, name: "여황제", eng: "The Empress", keyword: "풍요, 모성, 창조, 자연의 축복", reverse: "과잉보호, 집착, 창조적 고갈",
+    astrology: "금성", elementTarot: "흙", description: "만물을 피워내는 대지의 어머니. 사랑과 풍요가 당신을 감싸고 있습니다." },
+  { num: 4, name: "황제", eng: "The Emperor", keyword: "권위, 안정, 리더십, 체계와 질서", reverse: "독재, 경직, 권력 남용",
+    astrology: "양자리", elementTarot: "불", description: "흔들림 없는 왕좌의 주인. 결단력과 책임감으로 세상을 다스리세요." },
+  { num: 5, name: "교황", eng: "Hierophant", keyword: "전통, 가르침, 신뢰, 영적 안내", reverse: "독단, 형식주의, 맹목적 추종",
+    astrology: "황소자리", elementTarot: "흙", description: "하늘과 땅을 잇는 다리. 스승의 지혜를 따르되, 자신만의 길도 잊지 마세요." },
+  { num: 6, name: "연인", eng: "The Lovers", keyword: "사랑, 선택, 조화, 영혼의 결합", reverse: "갈등, 불화, 잘못된 선택",
+    astrology: "쌍둥이자리", elementTarot: "바람", description: "에덴동산의 두 사람. 진정한 사랑은 선택에서 시작됩니다." },
+  { num: 7, name: "전차", eng: "The Chariot", keyword: "승리, 의지, 전진, 극복의 쾌감", reverse: "폭주, 방향 상실, 통제 불능",
+    astrology: "게자리", elementTarot: "물", description: "두 마리 스핑크스를 이끄는 전사. 의지력으로 모든 장애물을 돌파하세요!" },
+  { num: 8, name: "힘", eng: "Strength", keyword: "용기, 인내, 내면의 힘, 부드러운 강함", reverse: "자기의심, 약함, 내적 갈등",
+    astrology: "사자자리", elementTarot: "불", description: "사자를 어루만지는 여인. 진정한 강함은 폭력이 아닌 사랑에서 나옵니다." },
+  { num: 9, name: "은둔자", eng: "The Hermit", keyword: "성찰, 지혜, 고독, 진리 탐구", reverse: "고립, 현실 도피, 지나친 폐쇄",
+    astrology: "처녀자리", elementTarot: "흙", description: "등불을 든 현자. 혼자만의 시간이 가장 깊은 깨달음을 선사합니다." },
+  { num: 10, name: "운명의 수레바퀴", eng: "Wheel of Fortune", keyword: "전환, 운명, 기회, 순환의 법칙", reverse: "불운, 저항, 흐름 역행",
+    astrology: "목성", elementTarot: "불", description: "쉴 새 없이 도는 운명의 바퀴. 모든 것은 변하고, 지금이 바로 전환점!" },
+  { num: 11, name: "정의", eng: "Justice", keyword: "공정, 균형, 진실, 인과응보", reverse: "불공정, 회피, 편견",
+    astrology: "천칭자리", elementTarot: "바람", description: "저울과 검을 든 정의의 여신. 뿌린 대로 거두는 우주의 법칙." },
+  { num: 12, name: "매달린 사람", eng: "Hanged Man", keyword: "희생, 관점 전환, 내려놓음", reverse: "지연, 무의미한 고통",
+    astrology: "해왕성", elementTarot: "물", description: "거꾸로 매달린 채 미소짓는 사람. 포기가 아닌 새로운 시각의 발견입니다." },
+  { num: 13, name: "죽음", eng: "Death", keyword: "변화, 끝과 시작, 완전한 변혁", reverse: "변화 저항, 정체, 집착",
+    astrology: "전갈자리", elementTarot: "물", description: "끝은 곧 새로운 시작. 오래된 것을 보내야 새것이 찾아옵니다." },
+  { num: 14, name: "절제", eng: "Temperance", keyword: "균형, 조화, 인내, 중용의 미덕", reverse: "극단, 불균형, 조급함",
+    astrology: "사수자리", elementTarot: "불", description: "두 잔의 물을 섞는 천사. 극단이 아닌 중용에서 진정한 답을 찾으세요." },
+  { num: 15, name: "악마", eng: "The Devil", keyword: "유혹, 집착, 속박, 물질적 욕망", reverse: "해방, 각성, 사슬 풀기",
+    astrology: "염소자리", elementTarot: "흙", description: "쇠사슬은 느슨합니다 — 벗어날 수 있어요. 진짜 감옥은 마음 속에 있습니다." },
+  { num: 16, name: "탑", eng: "The Tower", keyword: "파괴, 급변, 각성, 기존 체계 붕괴", reverse: "변화 두려움, 회피, 불안정",
+    astrology: "화성", elementTarot: "불", description: "벼락 맞는 탑. 고통스럽지만, 무너져야 더 단단하게 다시 쌓을 수 있습니다." },
+  { num: 17, name: "별", eng: "The Star", keyword: "희망, 영감, 치유, 우주와의 연결", reverse: "절망, 단절, 희망 상실",
+    astrology: "물병자리", elementTarot: "바람", description: "폭풍 뒤에 빛나는 별. 상처가 치유되고 새로운 희망이 밝아옵니다." },
+  { num: 18, name: "달", eng: "The Moon", keyword: "환상, 불안, 직관, 무의식의 세계", reverse: "혼란 해소, 진실 직면",
+    astrology: "물고기자리", elementTarot: "물", description: "달빛 아래의 길. 두렵지만 직감을 믿고 어둠을 통과하세요." },
+  { num: 19, name: "태양", eng: "The Sun", keyword: "성공, 기쁨, 활력, 빛나는 미래", reverse: "지연된 성공, 일시적 좌절",
+    astrology: "태양", elementTarot: "불", description: "찬란한 태양 아래 춤추는 아이. 모든 것이 밝아지고 성공이 찾아옵니다!" },
+  { num: 20, name: "심판", eng: "Judgement", keyword: "부활, 각성, 소명, 운명의 부름", reverse: "후회, 미련, 소명 거부",
+    astrology: "명왕성", elementTarot: "불", description: "천사의 나팔 소리에 일어서는 영혼들. 당신의 진정한 소명을 따르세요." },
+  { num: 21, name: "세계", eng: "The World", keyword: "완성, 성취, 통합, 새 사이클 시작", reverse: "미완성, 지연, 닫히지 않은 결말",
+    astrology: "토성", elementTarot: "흙", description: "모든 여정의 끝이자 새로운 시작. 바보에서 시작한 여정이 드디어 완성!" },
 ];
 
-// 별자리
+// ─── 수비학 (Numerology) ───
+export const NUMEROLOGY: Record<number, { title: string; keyword: string; description: string; strength: string; weakness: string }> = {
+  1: { title: "독립적 리더", keyword: "개척, 독립, 창조", description: "타고난 개척자이자 리더. 새로운 길을 만들고 앞장서서 이끄는 선구자의 에너지를 품고 있습니다.", strength: "결단력, 독립심, 창의성", weakness: "독선, 고집, 외로움" },
+  2: { title: "조화의 외교관", keyword: "협력, 균형, 감성", description: "사람과 사람 사이의 다리 역할을 하는 외교관. 섬세한 감수성으로 조화를 만들어냅니다.", strength: "배려, 협동, 직관", weakness: "우유부단, 의존성, 소심" },
+  3: { title: "창의적 표현자", keyword: "표현, 소통, 즐거움", description: "말과 글, 예술로 세상을 밝히는 표현자. 타고난 낙관주의와 유머로 주변을 행복하게 합니다.", strength: "창의성, 소통, 낙관", weakness: "산만함, 과장, 감정기복" },
+  4: { title: "안정의 건축가", keyword: "체계, 노력, 현실", description: "흔들림 없는 기반을 쌓는 건축가. 성실함과 인내로 확실한 결과를 만들어냅니다.", strength: "성실, 인내, 실용", weakness: "고지식, 융통성 부족, 보수적" },
+  5: { title: "자유의 모험가", keyword: "변화, 자유, 모험", description: "정해진 길보다 미지의 세계를 택하는 모험가. 변화를 두려워하지 않고 자유를 추구합니다.", strength: "적응력, 다재다능, 용기", weakness: "무책임, 산만, 중독 주의" },
+  6: { title: "책임의 돌봄이", keyword: "사랑, 봉사, 가정", description: "사랑과 책임감으로 주변을 돌보는 따뜻한 존재. 가정과 공동체의 화합을 이끕니다.", strength: "헌신, 책임감, 사랑", weakness: "간섭, 희생 강요, 번아웃" },
+  7: { title: "탐구의 철학자", keyword: "분석, 영성, 진리", description: "보이는 것 너머를 탐구하는 철학자. 깊은 사색과 분석으로 진리에 다가갑니다.", strength: "통찰력, 분석력, 영성", weakness: "고립, 냉소, 완벽주의" },
+  8: { title: "성취의 야망가", keyword: "권력, 성공, 물질", description: "목표를 향해 돌진하는 야망의 화신. 현실적 능력으로 큰 성취를 이룹니다.", strength: "추진력, 관리능력, 야망", weakness: "물질만능, 과로, 지배욕" },
+  9: { title: "인류의 이상주의자", keyword: "박애, 완성, 지혜", description: "모든 숫자를 품은 완성의 수. 넓은 시야로 세상을 바라보며 인류애를 실천합니다.", strength: "관대함, 지혜, 예술성", weakness: "비현실적, 감정과잉, 자기희생" },
+  11: { title: "영적 직관의 마스터", keyword: "영감, 계시, 직관", description: "마스터 넘버 11! 일반인이 보지 못하는 것을 감지하는 영적 안테나의 소유자.", strength: "영적 직관, 영감, 카리스마", weakness: "신경과민, 불안, 이상과 현실의 괴리" },
+  22: { title: "비전 실현의 건설자", keyword: "비전, 실현, 대업", description: "마스터 넘버 22! 거대한 비전을 현실로 만드는 마스터 빌더. 꿈을 설계도로 바꿉니다.", strength: "실행력, 비전, 조직력", weakness: "완벽주의, 극심한 압박감, 좌절" },
+  33: { title: "치유와 헌신의 스승", keyword: "치유, 가르침, 무조건적 사랑", description: "마스터 넘버 33! 가장 높은 사랑의 진동수. 치유하고 가르치는 영적 스승의 에너지.", strength: "무조건적 사랑, 치유, 영성", weakness: "자기 무시, 에너지 소진, 이상 과다" },
+};
+
+// ─── 별자리 12궁 (확장) ───
 export const ZODIAC = [
-  { name: "양자리", period: "3.21-4.19", element: "불", keyword: "용기, 개척" },
-  { name: "황소자리", period: "4.20-5.20", element: "흙", keyword: "안정, 감각" },
-  { name: "쌍둥이자리", period: "5.21-6.21", element: "바람", keyword: "소통, 호기심" },
-  { name: "게자리", period: "6.22-7.22", element: "물", keyword: "감성, 보호" },
-  { name: "사자자리", period: "7.23-8.22", element: "불", keyword: "리더, 화려" },
-  { name: "처녀자리", period: "8.23-9.22", element: "흙", keyword: "분석, 완벽" },
-  { name: "천칭자리", period: "9.23-10.22", element: "바람", keyword: "균형, 외교" },
-  { name: "전갈자리", period: "10.23-11.21", element: "물", keyword: "깊이, 변환" },
-  { name: "사수자리", period: "11.22-12.21", element: "불", keyword: "자유, 철학" },
-  { name: "염소자리", period: "12.22-1.19", element: "흙", keyword: "야망, 인내" },
-  { name: "물병자리", period: "1.20-2.18", element: "바람", keyword: "혁신, 독립" },
-  { name: "물고기자리", period: "2.19-3.20", element: "물", keyword: "직관, 영성" },
+  { name: "양자리", symbol: "♈", period: "3.21-4.19", element: "불", ruling: "화성", keyword: "용기, 개척, 열정, 솔직",
+    description: "12궁의 첫 별자리! 새 시작의 에너지로 가득 찬 전사. 두려움 없이 돌진하는 용기의 아이콘.", compatibility: "사자자리, 사수자리" },
+  { name: "황소자리", symbol: "♉", period: "4.20-5.20", element: "흙", ruling: "금성", keyword: "안정, 감각, 인내, 미식",
+    description: "오감이 발달한 현실주의자. 느리지만 확실한 성취를 만드는 인내의 별자리.", compatibility: "처녀자리, 염소자리" },
+  { name: "쌍둥이자리", symbol: "♊", period: "5.21-6.21", element: "바람", ruling: "수성", keyword: "소통, 호기심, 다재, 변화",
+    description: "두 개의 얼굴을 가진 소통의 달인. 끝없는 호기심과 재치로 어디서든 인기 만점!", compatibility: "천칭자리, 물병자리" },
+  { name: "게자리", symbol: "♋", period: "6.22-7.22", element: "물", ruling: "달", keyword: "감성, 보호, 가족, 직관",
+    description: "단단한 껍데기 아래 부드러운 마음. 가족과 소중한 사람을 끝까지 지키는 수호자.", compatibility: "전갈자리, 물고기자리" },
+  { name: "사자자리", symbol: "♌", period: "7.23-8.22", element: "불", ruling: "태양", keyword: "리더, 화려, 자존심, 관대",
+    description: "백수의 왕! 태양처럼 빛나는 존재감과 타고난 리더십. 무대 위의 스타.", compatibility: "양자리, 사수자리" },
+  { name: "처녀자리", symbol: "♍", period: "8.23-9.22", element: "흙", ruling: "수성", keyword: "분석, 완벽, 실용, 겸손",
+    description: "디테일의 신. 완벽한 분석력과 실용적 지혜로 세상을 정리정돈하는 능력자.", compatibility: "황소자리, 염소자리" },
+  { name: "천칭자리", symbol: "♎", period: "9.23-10.22", element: "바람", ruling: "금성", keyword: "균형, 외교, 아름다움, 정의",
+    description: "조화와 아름다움의 수호자. 갈등 속에서도 균형을 찾는 천생 중재자.", compatibility: "쌍둥이자리, 물병자리" },
+  { name: "전갈자리", symbol: "♏", period: "10.23-11.21", element: "물", ruling: "명왕성", keyword: "깊이, 변환, 열정, 비밀",
+    description: "가장 깊고 강렬한 별자리. 표면 아래 용암같은 열정이 숨어있는 변혁가.", compatibility: "게자리, 물고기자리" },
+  { name: "사수자리", symbol: "♐", period: "11.22-12.21", element: "불", ruling: "목성", keyword: "자유, 철학, 모험, 낙관",
+    description: "활시위를 당기는 궁수처럼 더 넓은 세상을 향해! 자유와 진리를 추구하는 낙관주의자.", compatibility: "양자리, 사자자리" },
+  { name: "염소자리", symbol: "♑", period: "12.22-1.19", element: "흙", ruling: "토성", keyword: "야망, 인내, 책임, 현실",
+    description: "정상을 향해 묵묵히 올라가는 산양. 시간이 갈수록 빛나는 대기만성형.", compatibility: "황소자리, 처녀자리" },
+  { name: "물병자리", symbol: "♒", period: "1.20-2.18", element: "바람", ruling: "천왕성", keyword: "혁신, 독립, 인류애, 독창",
+    description: "시대를 앞서가는 혁신가. 틀에 갇히지 않는 자유로운 사고로 세상을 바꿉니다.", compatibility: "쌍둥이자리, 천칭자리" },
+  { name: "물고기자리", symbol: "♓", period: "2.19-3.20", element: "물", ruling: "해왕성", keyword: "직관, 영성, 감성, 동정",
+    description: "12궁의 마지막, 모든 것을 품은 별자리. 꿈과 현실의 경계를 넘나드는 영적 감수성.", compatibility: "게자리, 전갈자리" },
 ];
 
-// 2026 병오년 월별 운세
+// ─── 2026 병오년 월별 운세 (확장) ───
 export const MONTHLY_2026 = [
-  { month: 1, ganji: "경인", keyword: "시작의 에너지, 계획 수립", luck: 3 },
-  { month: 2, ganji: "신묘", keyword: "섬세한 실행, 인맥 확장", luck: 4 },
-  { month: 3, ganji: "임진", keyword: "큰 전환, 기회 포착", luck: 5 },
-  { month: 4, ganji: "계사", keyword: "지혜로운 판단, 숨은 기회", luck: 4 },
-  { month: 5, ganji: "갑오", keyword: "최고 에너지, 승부수!", luck: 5 },
-  { month: 6, ganji: "을미", keyword: "유연한 대처, 휴식 필요", luck: 3 },
-  { month: 7, ganji: "병신", keyword: "결단과 실행, 금전운↑", luck: 4 },
-  { month: 8, ganji: "정유", keyword: "마무리, 수확의 시간", luck: 4 },
-  { month: 9, ganji: "무술", keyword: "안정, 기반 다지기", luck: 3 },
-  { month: 10, ganji: "기해", keyword: "내면 성장, 준비기", luck: 3 },
-  { month: 11, ganji: "경자", keyword: "새로운 시작 준비", luck: 4 },
-  { month: 12, ganji: "신축", keyword: "정리, 마무리", luck: 3 },
+  { month: 1, ganji: "경인(庚寅)", element: "금+목", keyword: "시작의 에너지, 계획 수립", luck: 3,
+    advice: "호랑이의 기운이 감도는 1월! 올해의 큰 그림을 그리세요. 무리한 실행보다 치밀한 계획이 필요한 때." },
+  { month: 2, ganji: "신묘(辛卯)", element: "금+목", keyword: "섬세한 실행, 인맥 확장", luck: 4,
+    advice: "토끼의 재치가 필요한 달. 새로운 인연이 찾아올 수 있으니 열린 마음으로 만남에 임하세요." },
+  { month: 3, ganji: "임진(壬辰)", element: "수+토", keyword: "큰 전환, 기회 포착", luck: 5,
+    advice: "용의 기운이 활활! 올 상반기 최고의 기회가 찾아옵니다. 과감한 도전이 큰 보상으로 돌아올 달." },
+  { month: 4, ganji: "계사(癸巳)", element: "수+화", keyword: "지혜로운 판단, 숨은 기회", luck: 4,
+    advice: "뱀의 지혜가 빛나는 달. 표면 아래 숨어있는 기회를 포착하세요. 직감을 믿으되 검증은 필수!" },
+  { month: 5, ganji: "갑오(甲午)", element: "목+화", keyword: "최고 에너지, 승부수!", luck: 5,
+    advice: "말의 해에 말의 달! 화기(火氣) 폭발! 올해 최고의 에너지 월. 미루던 일에 과감하게 승부수를 던지세요!" },
+  { month: 6, ganji: "을미(乙未)", element: "목+토", keyword: "유연한 대처, 휴식 필요", luck: 3,
+    advice: "양의 평화로움이 필요한 때. 상반기 전력 질주 후 충전이 필요합니다. 가족, 친구와의 시간을 가지세요." },
+  { month: 7, ganji: "병신(丙申)", element: "화+금", keyword: "결단과 실행, 금전운 상승", luck: 4,
+    advice: "태양(丙)과 원숭이(申)의 만남! 재치있는 판단으로 금전적 기회를 잡으세요. 투자보다 본업 집중!" },
+  { month: 8, ganji: "정유(丁酉)", element: "화+금", keyword: "마무리, 수확의 시간", luck: 4,
+    advice: "촛불의 따뜻함으로 결실을 거두는 달. 상반기에 뿌린 씨앗이 열매를 맺기 시작합니다." },
+  { month: 9, ganji: "무술(戊戌)", element: "토+토", keyword: "안정, 기반 다지기", luck: 3,
+    advice: "산과 개의 충직함! 더블 토(土) 에너지로 단단한 기반을 다지세요. 부동산/재산 관련 결정에 좋은 시기." },
+  { month: 10, ganji: "기해(己亥)", element: "토+수", keyword: "내면 성장, 준비기", luck: 3,
+    advice: "돼지의 복을 받는 달. 외적 성과보다 내면의 성장에 집중하면 연말에 큰 선물이 기다립니다." },
+  { month: 11, ganji: "경자(庚子)", element: "금+수", keyword: "새로운 시작 준비", luck: 4,
+    advice: "쥐의 영리함으로 내년을 준비하세요. 새로운 계획과 인맥 정리에 최적의 달!" },
+  { month: 12, ganji: "신축(辛丑)", element: "금+토", keyword: "정리, 마무리, 감사", luck: 3,
+    advice: "소의 끈기로 한 해를 마무리. 올해의 교훈을 정리하고 감사한 마음으로 새해를 준비하세요." },
 ];
 
-// 띠 계산
+// ─── 인상학 (Face Reading) ───
+export const PHYSIOGNOMY = {
+  ohak: {
+    title: "오악(五嶽)",
+    description: "얼굴의 다섯 산(봉우리)으로 보는 인상학의 핵심 구조",
+    items: [
+      { name: "남악(南嶽)", part: "이마", meaning: "초년운(15~30세). 지적 능력과 부모 복. 이마가 넓고 둥글면 초년운이 좋고 지혜로움." },
+      { name: "북악(北嶽)", part: "턱", meaning: "말년운(50세 이후). 의지력과 추진력. 턱이 발달하면 만년에 안정되고 부하 복이 있음." },
+      { name: "동악(東嶽)", part: "왼쪽 광대", meaning: "좌보(左輔). 사회적 지위와 인맥. 왼쪽 광대가 적당히 발달하면 인복이 좋음." },
+      { name: "서악(西嶽)", part: "오른쪽 광대", meaning: "우필(右弼). 권력과 실행력. 오른쪽 광대가 풍만하면 리더십이 강함." },
+      { name: "중악(中嶽)", part: "코", meaning: "중년운(30~50세). 재물운과 자존심. 코가 곧고 풍만하면 재물운이 좋고 자수성가형." },
+    ],
+  },
+  samjeong: {
+    title: "삼정(三停)",
+    description: "얼굴을 상·중·하 세 부분으로 나누어 인생의 초·중·말년을 봅니다",
+    items: [
+      { name: "상정(上停)", range: "이마 ~ 눈썹", period: "초년(15~30세)", meaning: "지적 능력, 교육운, 부모와의 인연. 상정이 넓고 깨끗하면 학업운이 좋고 좋은 교육을 받음." },
+      { name: "중정(中停)", range: "눈썹 ~ 코끝", period: "중년(31~50세)", meaning: "사회적 성취, 재물, 명예. 중정이 균형잡히면 사회생활이 순탄하고 재물운이 좋음." },
+      { name: "하정(下停)", range: "코끝 ~ 턱", period: "말년(51세 이후)", meaning: "가정운, 자녀복, 건강. 하정이 풍만하면 만년에 행복하고 자녀 복이 있음." },
+    ],
+  },
+  sibigungPositions: {
+    title: "십이궁(十二宮)",
+    description: "얼굴의 12구역으로 인생의 12가지 운세를 판독합니다",
+    items: [
+      { name: "명궁(命宮)", position: "미간", meaning: "전체 운명의 중심. 미간이 넓고 깨끗하면 운이 트이고, 좁거나 주름지면 고생이 많을 수 있음." },
+      { name: "재백궁(財帛宮)", position: "코", meaning: "재물운의 핵심. 코가 곧고 풍만하면 돈을 잘 벌고 모으는 재력가." },
+      { name: "형제궁(兄弟宮)", position: "눈썹", meaning: "형제·친구 관계. 눈썹이 정돈되고 길면 형제 복과 인맥이 좋음." },
+      { name: "부모궁(父母宮)", position: "이마 양쪽", meaning: "부모 복과 윗사람과의 관계. 이마가 맑고 밝으면 부모 복이 큼." },
+      { name: "전택궁(田宅宮)", position: "눈과 눈썹 사이", meaning: "주거·부동산 운. 이 부분이 넓으면 부동산 복이 있고 살 곳이 좋음." },
+      { name: "남녀궁(男女宮)", position: "눈 아래(와잠)", meaning: "자녀운. 눈 아래가 풍만하고 색이 좋으면 자녀 복이 큼." },
+      { name: "처첩궁(妻妾宮)", position: "눈꼬리", meaning: "배우자 운. 눈꼬리가 올라가면 배우자가 능력 있고, 처지면 정에 약함." },
+      { name: "질액궁(疾厄宮)", position: "코 중간(산근)", meaning: "건강운. 콧등 중간이 높고 곧으면 건강하고, 낮거나 끊기면 질병 주의." },
+      { name: "천이궁(遷移宮)", position: "이마 양 끝(천창)", meaning: "여행·이사·해외운. 이 부분이 둥글면 여행이 좋고 해외에서 발복할 수 있음." },
+      { name: "노복궁(奴僕宮)", position: "턱 양쪽", meaning: "아랫사람 복. 턱이 넓으면 부하 복이 있고, 좁으면 혼자 힘으로 살아야 함." },
+      { name: "관록궁(官祿宮)", position: "이마 중앙", meaning: "직업·사회적 성취. 이마 중앙이 밝고 넓으면 높은 자리에 오를 수 있음." },
+      { name: "복덕궁(福德宮)", position: "눈썹 끝 위", meaning: "타고난 복과 정신적 풍요. 이 부분이 풍만하면 복이 많고 정신적으로 풍요로움." },
+    ],
+  },
+  faceShapes: {
+    title: "오행 얼굴형",
+    description: "얼굴형을 오행(木火土金水)에 대입하여 성격과 운명을 판단합니다",
+    items: [
+      { element: "목(木)형", shape: "긴 얼굴, 좁은 턱", features: "이마가 좁고 얼굴이 길며 체형이 마른 편",
+        personality: "이상주의적, 학구적, 예술적. 나무처럼 곧고 정직하며 인내심이 강합니다.",
+        fortune: "초년에 고생하나 중년 이후 서서히 발복. 학문/예술 분야에서 두각." },
+      { element: "화(火)형", shape: "역삼각형, 뾰족한 턱", features: "이마가 넓고 턱이 좁으며 광대가 발달",
+        personality: "정열적, 직관적, 창의적. 불꽃처럼 뜨거운 열정과 빠른 판단력의 소유자.",
+        fortune: "초년에 두각을 나타내나 만년에 주의 필요. 사업/연예 분야에 강함." },
+      { element: "토(土)형", shape: "사각형, 넓은 얼굴", features: "얼굴이 넓적하고 턱이 발달하며 체격이 좋음",
+        personality: "안정적, 신뢰감, 포용력. 대지처럼 듬직하고 사람들에게 신뢰를 줍니다.",
+        fortune: "꾸준한 운세로 큰 기복 없이 안정적. 부동산/농업/관리직에서 성공." },
+      { element: "금(金)형", shape: "달걀형, 정돈된 이목구비", features: "피부가 희고 이목구비가 또렷하며 골격이 단정",
+        personality: "결단력, 정의감, 완벽주의. 보석처럼 빛나는 미적 감각과 날카로운 판단력.",
+        fortune: "중년에 크게 발복. 금융/법률/기술 분야에서 두각을 나타냄." },
+      { element: "수(水)형", shape: "둥근 얼굴, 풍만한 느낌", features: "얼굴이 둥글고 살이 부드러우며 이목구비가 둥근 편",
+        personality: "지혜롭고 유연, 적응력 최강. 물처럼 어떤 그릇에든 담기는 유연함.",
+        fortune: "지혜로 위기를 넘기며 꾸준히 발전. 학문/무역/서비스업에서 성공." },
+    ],
+  },
+};
+
+// ─── 오늘의 한마디 (콜잇도사) ───
+export const DAILY_QUOTES = [
+  "운명은 정해진 것이 아니라, 매 순간의 선택이 만드는 것이지. — 콜잇도사",
+  "오늘 하루, 당신이 뿌린 씨앗은 반드시 꽃이 됩니다. 조금만 기다려봐. — 콜잇도사",
+  "별이 당신을 비추고 있어. 하지만 걸어가는 건 당신의 두 발이지. — 콜잇도사",
+  "좋은 운은 좋은 마음에서 오는 법이야. 오늘도 웃어봐! — 콜잇도사",
+  "과거는 타로에 맡기고, 미래는 별에 물어봐. 현재는 네가 만들어! — 콜잇도사",
+  "고민이 많은 날일수록, 하늘을 한번 올려다봐. 답이 보일 거야. — 콜잇도사",
+  "오행의 기운이 널 감싸고 있어. 오늘은 네 안의 불꽃을 믿어봐! — 콜잇도사",
+  "세상에 완벽한 사주는 없어. 부족한 것은 노력으로 채우면 돼. — 콜잇도사",
+  "타로카드가 말해줘 — 지금 이 순간이 바로 전환점이라고! — 콜잇도사",
+  "12지신이 모두 널 응원하고 있어. 오늘 하루도 힘내! — 콜잇도사",
+  "수비학이 알려줘 — 네 영혼의 숫자는 무한한 가능성을 품고 있다고. — 콜잇도사",
+  "별자리는 방향을 알려주지만, 출발은 네가 해야 해. 자, 이제 가볼까? — 콜잇도사",
+  "인상(人相)은 변해. 좋은 마음을 품으면 좋은 인상이 되는 법이지. — 콜잇도사",
+  "오늘의 운세가 좋든 나쁘든, 진짜 중요한 건 네 마음가짐이야. — 콜잇도사",
+  "동양의 사주와 서양의 별자리, 둘 다 말하고 있어 — 넌 특별하다고! — 콜잇도사",
+];
+
+// ─── 유틸리티 함수들 ───
+
 export function getAnimalSign(year: number) {
   const idx = (year - 4) % 12;
   return JIJI[idx >= 0 ? idx : idx + 12];
 }
 
-// 별자리 계산
 export function getZodiac(month: number, day: number) {
-  const dates = [20,19,21,20,21,22,23,23,23,23,22,22];
-  const idx = day < dates[month-1] ? (month + 10) % 12 : (month + 11) % 12;
+  const dates = [20, 19, 21, 20, 21, 22, 23, 23, 23, 23, 22, 22];
+  const idx = day < dates[month - 1] ? (month + 10) % 12 : (month + 11) % 12;
   return ZODIAC[idx];
 }
 
-// 생명수 계산
 export function getLifePath(y: number, m: number, d: number) {
   const sum = String(y) + String(m) + String(d);
   let total = sum.split("").reduce((a, b) => a + parseInt(b), 0);
@@ -114,58 +310,44 @@ export function getLifePath(y: number, m: number, d: number) {
   return total;
 }
 
-// 오늘의 타로 (날짜 기반 시드)
+export function getCheongan(year: number) {
+  return CHEONGAN[(year - 4) % 10];
+}
+
+export function getElementAnalysis(year: number, month: number, day: number) {
+  const stem = getCheongan(year);
+  const branch = getAnimalSign(year);
+  const elements: Record<string, number> = { "목": 0, "화": 0, "토": 0, "금": 0, "수": 0 };
+  elements[stem.element] += 2;
+  elements[branch.element] += 2;
+  const monthBranch = JIJI.find(j => j.month === month) || JIJI[0];
+  elements[monthBranch.element] += 1;
+  const dayElement = ["목", "화", "토", "금", "수"][day % 5];
+  elements[dayElement] += 1;
+
+  const dominant = Object.entries(elements).sort((a, b) => b[1] - a[1])[0][0];
+  const weak = Object.entries(elements).sort((a, b) => a[1] - b[1])[0][0];
+
+  return { elements, dominant, weak, stem, branch };
+}
+
 export function getTodayTarot() {
   const today = new Date();
-  const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
+  const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
   const idx1 = seed % 22;
   const idx2 = (seed * 7 + 13) % 22;
   const idx3 = (seed * 3 + 7) % 22;
-  return [TAROT_MAJOR[idx1], TAROT_MAJOR[idx2 === idx1 ? (idx2+1)%22 : idx2], TAROT_MAJOR[idx3 === idx1 || idx3 === idx2 ? (idx3+2)%22 : idx3]];
+  return [
+    TAROT_MAJOR[idx1],
+    TAROT_MAJOR[idx2 === idx1 ? (idx2 + 1) % 22 : idx2],
+    TAROT_MAJOR[idx3 === idx1 || idx3 === idx2 ? (idx3 + 2) % 22 : idx3],
+  ];
 }
 
-// 인상학 데이터
-export const PHYSIOGNOMY = {
-  oAk: [
-    { name: "남악(衡山)", position: "이마", meaning: "초년운, 지성, 부모덕" },
-    { name: "북악(恒山)", position: "턱", meaning: "말년운, 안정, 자식덕" },
-    { name: "동악(泰山)", position: "좌광대", meaning: "좌측 운세, 형제" },
-    { name: "서악(華山)", position: "우광대", meaning: "우측 운세, 친구" },
-    { name: "중악(嵩山)", position: "코", meaning: "중년운, 재물, 건강" },
-  ],
-  samJeong: [
-    { name: "상정", area: "이마~눈썹", period: "초년(15~30세)", meaning: "지성, 부모덕, 학업" },
-    { name: "중정", area: "눈썹~코끝", period: "중년(31~50세)", meaning: "의지, 재물, 사업" },
-    { name: "하정", area: "코끝~턱", period: "말년(51세~)", meaning: "건강, 자식덕, 부동산" },
-  ],
-  twelveGung: [
-    { name: "명궁(命宮)", position: "미간", meaning: "운명의 총괄" },
-    { name: "재백궁(財帛宮)", position: "코", meaning: "재물운" },
-    { name: "관록궁(官祿宮)", position: "이마 중앙", meaning: "직업/출세운" },
-    { name: "천이궁(遷移宮)", position: "이마 양측", meaning: "이동/여행운" },
-    { name: "부모궁(父母宮)", position: "이마 좌우", meaning: "부모덕" },
-    { name: "형제궁(兄弟宮)", position: "눈썹", meaning: "형제/친구운" },
-    { name: "부처궁(夫妻宮)", position: "눈꼬리", meaning: "배우자운" },
-    { name: "자녀궁(子女宮)", position: "눈 아래", meaning: "자녀운" },
-    { name: "질액궁(疾厄宮)", position: "산근", meaning: "건강/재난" },
-    { name: "노복궁(奴僕宮)", position: "턱 양측", meaning: "부하/아랫사람" },
-    { name: "전택궁(田宅宮)", position: "눈~눈썹 사이", meaning: "부동산/재산" },
-    { name: "복덕궁(福德宮)", position: "눈썹 꼬리 위", meaning: "복/행운" },
-  ],
-  faceByElement: [
-    { element: "목(木)", shape: "긴 얼굴", feature: "키 큼, 마름, 학자형" },
-    { element: "화(火)", shape: "뾰족한 얼굴", feature: "이마 넓음, 턱 좁음, 예술가형" },
-    { element: "토(土)", shape: "네모난 얼굴", feature: "두터움, 안정, 관리자형" },
-    { element: "금(金)", shape: "둥근 얼굴", feature: "광대 발달, 결단력, 무인형" },
-    { element: "수(水)", shape: "통통한 얼굴", feature: "귀 큼, 지혜, 학자/외교형" },
-  ],
-};
-
-// 오늘의 행운 요소
 export function getLuckyElements() {
   const today = new Date();
   const seed = today.getDate() + today.getMonth() * 31;
-  const colors = ["빨강", "파랑", "초록", "노랑", "보라", "검정", "흰색", "분홍", "하늘색"];
+  const colors = ["빨강", "파랑", "초록", "노랑", "보라", "검정", "흰색", "분홍", "하늘색", "금색", "은색"];
   const directions = ["동", "서", "남", "북", "동남", "서남", "동북", "서북"];
   return {
     color: colors[seed % colors.length],
@@ -174,10 +356,9 @@ export function getLuckyElements() {
   };
 }
 
-// 일운 해석 (간단)
 export function getDailyFortune() {
   const today = new Date();
-  const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
+  const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
   const categories = [
     { cat: "💰 재물운", score: ((seed * 3) % 5) + 1 },
     { cat: "💕 연애운", score: ((seed * 7) % 5) + 1 },
@@ -187,4 +368,10 @@ export function getDailyFortune() {
   ];
   const total = Math.round(categories.reduce((a, b) => a + b.score, 0) / categories.length * 20);
   return { categories, total };
+}
+
+export function getDailyQuote() {
+  const today = new Date();
+  const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+  return DAILY_QUOTES[seed % DAILY_QUOTES.length];
 }
