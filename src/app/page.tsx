@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   getTodayTarot, getLuckyElements, getDailyFortune, getAnimalSign, getZodiac,
   getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, JIJI, CHEONGAN,
-  PHYSIOGNOMY,
+  PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY,
 } from "@/data/fortune";
 
 type Tab = "root" | "chat" | "my";
@@ -238,24 +238,76 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
         </div>
       )}
 
-      {/* 통합 분석 */}
+      {/* 통합 분석 리포트 */}
       <div className="space-y-3">
-        {/* 명리학 */}
-        {animal && (
-          <div className="bg-mystic-card border border-border rounded-2xl p-4">
-            <p className="font-bold text-sm text-purple-glow mb-2">📜 명리학</p>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="bg-mystic/50 rounded-lg p-2">
-                <p className="text-text-muted">띠</p>
-                <p className="font-bold">{animal.animal}</p>
+        {/* 사주원국 */}
+        {y && m && d && (() => {
+          const saju = getSajuWonguk(y, m, d, profile.hour ? parseInt(profile.hour) : undefined);
+          const pillars = [
+            { label: "시주", gan: saju.hourGan, ji: saju.hourJi },
+            { label: "일주", gan: saju.dayGan, ji: saju.dayJi },
+            { label: "월주", gan: saju.monthGan, ji: saju.monthJi },
+            { label: "년주", gan: saju.yearGan, ji: saju.yearJi },
+          ];
+          const elColors: Record<string,string> = {"목":"#27ae60","화":"#e74c3c","토":"#d4a437","금":"#bdc3c7","수":"#3498db"};
+          return (
+            <>
+              <div className="bg-mystic-card border border-border rounded-2xl p-4">
+                <p className="font-bold text-sm text-purple-glow mb-3">📜 사주원국(四柱八字)</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {pillars.map((p) => (
+                    <div key={p.label} className="text-center">
+                      <p className="text-[10px] text-text-muted mb-1">{p.label}</p>
+                      <div className="rounded-lg p-2 mb-1" style={{backgroundColor: elColors[p.gan.element]+"20", border: `1px solid ${elColors[p.gan.element]}40`}}>
+                        <p className="text-lg font-bold" style={{color: elColors[p.gan.element]}}>{p.gan.hanja}</p>
+                        <p className="text-[10px] text-text-muted">{p.gan.name}{p.gan.element}</p>
+                      </div>
+                      <div className="rounded-lg p-2" style={{backgroundColor: elColors[p.ji.element]+"20", border: `1px solid ${elColors[p.ji.element]}40`}}>
+                        <p className="text-lg font-bold" style={{color: elColors[p.ji.element]}}>{p.ji.animal.split(" ")[0]}</p>
+                        <p className="text-[10px] text-text-muted">{p.ji.name}{p.ji.element}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="bg-mystic/50 rounded-lg p-2">
-                <p className="text-text-muted">오행</p>
-                <p className="font-bold" style={{color: ELEMENT_COLORS[animal.element]}}>{animal.element}</p>
+
+              {/* 오행 비율 */}
+              <div className="bg-mystic-card border border-border rounded-2xl p-4">
+                <p className="font-bold text-sm text-purple-glow mb-3">☯️ 오행 비율</p>
+                <div className="space-y-2">
+                  {Object.entries(saju.elementPercent).map(([el, pct]) => (
+                    <div key={el} className="flex items-center gap-2">
+                      <span className="text-xs w-8" style={{color: elColors[el]}}>{el}</span>
+                      <div className="flex-1 h-4 bg-mystic/50 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all" style={{width: `${pct}%`, backgroundColor: elColors[el]}} />
+                      </div>
+                      <span className="text-xs text-text-muted w-10 text-right">{pct}%</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+
+              {/* 신강/신약 */}
+              <div className="bg-mystic-card border border-border rounded-2xl p-4 text-center">
+                <p className="font-bold text-sm text-purple-glow mb-2">⚖️ 신강/신약</p>
+                <div className="relative w-24 h-24 mx-auto">
+                  <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="#2A2A2A" strokeWidth="8" />
+                    <circle cx="50" cy="50" r="40" fill="none" stroke={saju.sinScore >= 50 ? "#D4AF37" : "#9b59b6"} strokeWidth="8"
+                      strokeDasharray={`${saju.sinScore * 2.51} 251`} strokeLinecap="round" />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xl font-bold text-gold">{saju.sinScore}</span>
+                  </div>
+                </div>
+                <p className="text-xs text-text-secondary mt-2">
+                  {saju.sinScore >= 60 ? "신강(身强) — 에너지 넘침, 리더형" : saju.sinScore >= 40 ? "중화(中和) — 균형 잡힌 사주" : "신약(身弱) — 섬세하고 전략적"}
+                </p>
+                <p className="text-[10px] text-text-muted mt-1">일간: {saju.dayGan.hanja}({saju.dayGan.element}) — {saju.dayGan.keyword}</p>
+              </div>
+            </>
+          );
+        })()}
 
         {/* 타로 */}
         <div className="bg-mystic-card border border-border rounded-2xl p-4">
@@ -277,6 +329,7 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
             <div className="bg-mystic-card border border-border rounded-2xl p-4 text-center">
               <p className="text-[10px] text-text-muted">🔢 생명수</p>
               <p className="text-2xl font-bold text-gold">{lifePath}</p>
+              {NUMEROLOGY[lifePath] && <p className="text-[10px] text-text-secondary mt-1">{NUMEROLOGY[lifePath].title}</p>}
             </div>
           )}
           {zodiac && (
@@ -342,6 +395,12 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
           })}
         </div>
       </div>
+
+      {/* 도사에게 물어보기 */}
+      <button onClick={() => {/* setTab will be handled by parent */}}
+        className="w-full py-4 bg-gradient-to-r from-purple-glow to-gold rounded-2xl font-bold text-sm hover:opacity-90 transition">
+        💬 타일러 도사에게 더 물어보기
+      </button>
 
       <p className="text-[10px] text-text-muted text-center pb-4">타일러의 타이르는 운세 · v3.0</p>
     </div>

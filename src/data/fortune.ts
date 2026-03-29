@@ -375,3 +375,66 @@ export function getDailyQuote() {
   const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
   return DAILY_QUOTES[seed % DAILY_QUOTES.length];
 }
+
+// ─── 사주원국 계산 (간략 시뮬레이션) ───
+export function getSajuWonguk(year: number, month: number, day: number, hour?: number) {
+  // 년주
+  const yearGanIdx = (year - 4) % 10;
+  const yearJiIdx = (year - 4) % 12;
+  const yearGan = CHEONGAN[yearGanIdx >= 0 ? yearGanIdx : yearGanIdx + 10];
+  const yearJi = JIJI[yearJiIdx >= 0 ? yearJiIdx : yearJiIdx + 12];
+  
+  // 월주 (간략 - 년간 기준)
+  const monthJiIdx = ((month + 1) % 12); // 인월=1월 기준 보정
+  const monthGanBase = [2,4,6,8,0]; // 갑기→병, 을경→무, 병신→경, 정임→임, 무계→갑
+  const yearGanGroup = yearGanIdx % 5;
+  const monthGanIdx = (monthGanBase[yearGanGroup] + (month - 1) * 1) % 10;
+  const monthGan = CHEONGAN[monthGanIdx];
+  const monthJi = JIJI[monthJiIdx];
+  
+  // 일주 (날짜 기반 시뮬레이션)
+  const baseDate = new Date(2000, 0, 7); // 갑자일 기준점
+  const targetDate = new Date(year, month - 1, day);
+  const diffDays = Math.floor((targetDate.getTime() - baseDate.getTime()) / 86400000);
+  const dayGanIdx = ((diffDays % 10) + 10) % 10;
+  const dayJiIdx = ((diffDays % 12) + 12) % 12;
+  const dayGan = CHEONGAN[dayGanIdx];
+  const dayJi = JIJI[dayJiIdx];
+  
+  // 시주
+  let hourGan = CHEONGAN[0];
+  let hourJi = JIJI[0];
+  if (hour !== undefined) {
+    const hourJiIdx2 = Math.floor(((hour + 1) % 24) / 2);
+    hourJi = JIJI[hourJiIdx2];
+    const dayGanGroup = dayGanIdx % 5;
+    const hourGanBase = [0, 2, 4, 6, 8];
+    const hourGanIdx2 = (hourGanBase[dayGanGroup] + hourJiIdx2) % 10;
+    hourGan = CHEONGAN[hourGanIdx2];
+  }
+  
+  // 오행 비율 계산
+  const elements = [yearGan.element, yearJi.element, monthGan.element, monthJi.element, dayGan.element, dayJi.element];
+  if (hour !== undefined) { elements.push(hourGan.element, hourJi.element); }
+  const elementCount: Record<string, number> = { "목": 0, "화": 0, "토": 0, "금": 0, "수": 0 };
+  elements.forEach(e => { if (e in elementCount) elementCount[e]++; });
+  const total = elements.length;
+  const elementPercent = Object.fromEntries(
+    Object.entries(elementCount).map(([k, v]) => [k, Math.round(v / total * 100)])
+  );
+  
+  // 신강/신약 점수 (일간 기준)
+  const dayElement = dayGan.element;
+  const supportCount = elements.filter(e => e === dayElement).length + 
+    elements.filter(e => {
+      const gen: Record<string,string> = {"수":"목","목":"화","화":"토","토":"금","금":"수"};
+      return gen[e] === dayElement;
+    }).length;
+  const sinScore = Math.round(supportCount / total * 100);
+  
+  return {
+    yearGan, yearJi, monthGan, monthJi, dayGan, dayJi, hourGan, hourJi,
+    elementPercent, sinScore,
+    hasHour: hour !== undefined,
+  };
+}
