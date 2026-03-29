@@ -2,10 +2,10 @@
 import { useState } from "react";
 import {
   getTodayTarot, getLuckyElements, getDailyFortune, getAnimalSign, getZodiac,
-  getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR,
+  getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, PHYSIOGNOMY,
 } from "@/data/fortune";
 
-type View = "home" | "today" | "my" | "tarot" | "monthly";
+type View = "home" | "today" | "my" | "tarot" | "monthly" | "face";
 
 function Stars() {
   return (
@@ -30,6 +30,7 @@ function Nav({ view, setView }: { view: View; setView: (v: View) => void }) {
     { id: "my", icon: "⭐", label: "나의 운세" },
     { id: "tarot", icon: "🃏", label: "타로" },
     { id: "monthly", icon: "📅", label: "월별 운세" },
+    { id: "face", icon: "👤", label: "인상학" },
   ];
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-mystic/90 backdrop-blur-xl border-t border-border md:static md:border-t-0 md:border-b">
@@ -62,14 +63,14 @@ function HomePage() {
       <div className="space-y-3">
         <h1 className="text-4xl md:text-5xl font-bold">
           <span className="bg-gradient-to-r from-purple-glow via-gold to-purple-glow bg-clip-text text-transparent">
-            🔮 콜잇도사
+            🔮 타일러의 타이르는 운세
           </span>
         </h1>
         <p className="text-text-secondary text-sm md:text-base">
           동서양 심리철학 융합 운세 AI
         </p>
         <p className="text-text-muted text-xs">
-          사주 · 타로 · 수비학 · 별자리 · 심리학
+          사주 · 타로 · 수비학 · 별자리 · 인상학 · 최면심리학
         </p>
       </div>
 
@@ -105,7 +106,7 @@ function HomePage() {
       </div>
 
       <p className="text-[10px] text-text-muted">
-        콜잇AI 운세 AI · 엔터테인먼트 목적 · v1.0
+        타일러의 타이르는 운세 · 엔터테인먼트 목적 · v2.0
       </p>
     </div>
   );
@@ -409,6 +410,82 @@ function MonthlyPage() {
   );
 }
 
+function FacePage() {
+  return (
+    <div className="space-y-6 py-4">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gold">👤 인상학</h2>
+        <p className="text-text-muted text-xs mt-1">얼굴로 보는 운명 — 人相學</p>
+      </div>
+
+      {/* 오악 */}
+      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
+        <h3 className="font-bold text-sm text-purple-glow">🏔️ 오악(五岳) — 얼굴의 5산</h3>
+        <p className="text-xs text-text-secondary">얼굴의 5가지 핵심 부위로 운세를 봅니다</p>
+        {PHYSIOGNOMY.oAk.map((o) => (
+          <div key={o.name} className="flex items-center justify-between bg-mystic/50 rounded-lg p-3">
+            <div>
+              <p className="text-sm font-medium">{o.name}</p>
+              <p className="text-[10px] text-text-muted">위치: {o.position}</p>
+            </div>
+            <p className="text-xs text-gold">{o.meaning}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* 삼정 */}
+      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
+        <h3 className="font-bold text-sm text-purple-glow">📐 삼정(三停) — 얼굴 3등분</h3>
+        {PHYSIOGNOMY.samJeong.map((s) => (
+          <div key={s.name} className="bg-mystic/50 rounded-lg p-3">
+            <div className="flex justify-between items-center">
+              <p className="text-sm font-bold">{s.name}</p>
+              <span className="text-[10px] px-2 py-0.5 bg-gold/10 text-gold rounded-full">{s.period}</span>
+            </div>
+            <p className="text-xs text-text-muted mt-1">{s.area}</p>
+            <p className="text-xs text-text-secondary mt-0.5">{s.meaning}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* 십이궁 */}
+      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
+        <h3 className="font-bold text-sm text-purple-glow">🏛️ 십이궁(十二宮)</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {PHYSIOGNOMY.twelveGung.map((g) => (
+            <div key={g.name} className="bg-mystic/50 rounded-lg p-2 text-center">
+              <p className="text-xs font-bold">{g.name}</p>
+              <p className="text-[10px] text-text-muted">{g.position}</p>
+              <p className="text-[10px] text-gold mt-0.5">{g.meaning}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 오행별 얼굴형 */}
+      <div className="bg-mystic-card border border-border rounded-2xl p-5 space-y-3">
+        <h3 className="font-bold text-sm text-purple-glow">🎭 오행별 얼굴형</h3>
+        {PHYSIOGNOMY.faceByElement.map((f) => (
+          <div key={f.element} className="flex items-center gap-3 bg-mystic/50 rounded-lg p-3">
+            <span className="text-2xl">{f.element.includes("목") ? "🌳" : f.element.includes("화") ? "🔥" : f.element.includes("토") ? "🏔️" : f.element.includes("금") ? "⚔️" : "💧"}</span>
+            <div>
+              <p className="text-sm font-medium">{f.element} — {f.shape}</p>
+              <p className="text-xs text-text-secondary">{f.feature}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-mystic-card border border-gold/20 rounded-2xl p-5 text-center">
+        <p className="text-gold text-sm">💡 콜잇도사의 한마디</p>
+        <p className="text-xs text-text-secondary mt-2 leading-relaxed">
+          &ldquo;인상학은 타고난 운명의 지도입니다. 얼굴의 오악과 삼정, 십이궁을 통해 과거·현재·미래의 흐름을 읽을 수 있습니다. 사주와 인상을 함께 보면 더욱 정확한 운세를 볼 수 있죠.&rdquo;
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [view, setView] = useState<View>("home");
 
@@ -419,6 +496,7 @@ export default function Home() {
       case "my": return <MyFortunePage />;
       case "tarot": return <TarotPage />;
       case "monthly": return <MonthlyPage />;
+      case "face": return <FacePage />;
     }
   };
 

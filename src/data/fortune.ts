@@ -124,6 +124,43 @@ export function getTodayTarot() {
   return [TAROT_MAJOR[idx1], TAROT_MAJOR[idx2 === idx1 ? (idx2+1)%22 : idx2], TAROT_MAJOR[idx3 === idx1 || idx3 === idx2 ? (idx3+2)%22 : idx3]];
 }
 
+// 인상학 데이터
+export const PHYSIOGNOMY = {
+  oAk: [
+    { name: "남악(衡山)", position: "이마", meaning: "초년운, 지성, 부모덕" },
+    { name: "북악(恒山)", position: "턱", meaning: "말년운, 안정, 자식덕" },
+    { name: "동악(泰山)", position: "좌광대", meaning: "좌측 운세, 형제" },
+    { name: "서악(華山)", position: "우광대", meaning: "우측 운세, 친구" },
+    { name: "중악(嵩山)", position: "코", meaning: "중년운, 재물, 건강" },
+  ],
+  samJeong: [
+    { name: "상정", area: "이마~눈썹", period: "초년(15~30세)", meaning: "지성, 부모덕, 학업" },
+    { name: "중정", area: "눈썹~코끝", period: "중년(31~50세)", meaning: "의지, 재물, 사업" },
+    { name: "하정", area: "코끝~턱", period: "말년(51세~)", meaning: "건강, 자식덕, 부동산" },
+  ],
+  twelveGung: [
+    { name: "명궁(命宮)", position: "미간", meaning: "운명의 총괄" },
+    { name: "재백궁(財帛宮)", position: "코", meaning: "재물운" },
+    { name: "관록궁(官祿宮)", position: "이마 중앙", meaning: "직업/출세운" },
+    { name: "천이궁(遷移宮)", position: "이마 양측", meaning: "이동/여행운" },
+    { name: "부모궁(父母宮)", position: "이마 좌우", meaning: "부모덕" },
+    { name: "형제궁(兄弟宮)", position: "눈썹", meaning: "형제/친구운" },
+    { name: "부처궁(夫妻宮)", position: "눈꼬리", meaning: "배우자운" },
+    { name: "자녀궁(子女宮)", position: "눈 아래", meaning: "자녀운" },
+    { name: "질액궁(疾厄宮)", position: "산근", meaning: "건강/재난" },
+    { name: "노복궁(奴僕宮)", position: "턱 양측", meaning: "부하/아랫사람" },
+    { name: "전택궁(田宅宮)", position: "눈~눈썹 사이", meaning: "부동산/재산" },
+    { name: "복덕궁(福德宮)", position: "눈썹 꼬리 위", meaning: "복/행운" },
+  ],
+  faceByElement: [
+    { element: "목(木)", shape: "긴 얼굴", feature: "키 큼, 마름, 학자형" },
+    { element: "화(火)", shape: "뾰족한 얼굴", feature: "이마 넓음, 턱 좁음, 예술가형" },
+    { element: "토(土)", shape: "네모난 얼굴", feature: "두터움, 안정, 관리자형" },
+    { element: "금(金)", shape: "둥근 얼굴", feature: "광대 발달, 결단력, 무인형" },
+    { element: "수(水)", shape: "통통한 얼굴", feature: "귀 큼, 지혜, 학자/외교형" },
+  ],
+};
+
 // 오늘의 행운 요소
 export function getLuckyElements() {
   const today = new Date();
