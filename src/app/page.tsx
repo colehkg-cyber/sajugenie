@@ -8,7 +8,7 @@ import {
 import { TODAY_FORTUNE } from "@/data/daily-fortune";
 import ReactMarkdown from "react-markdown";
 
-type Tab = "root" | "chat" | "graph" | "my";
+type Tab = "root" | "chat" | "graph" | "my" | "match";
 
 interface Profile {
   name: string;
@@ -39,7 +39,7 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   const items: { id: Tab; icon: string; label: string }[] = [
     { id: "root", icon: "🔮", label: "근본" },
     { id: "chat", icon: "💬", label: "타일러 도사" },
-    { id: "graph", icon: "🌐", label: "만상도" },
+    { id: "match", icon: "💕", label: "궁합" },
     { id: "my", icon: "👤", label: "MY" },
   ];
   return (
@@ -483,6 +483,25 @@ function RootTab({ profile, setProfile, saved, setTab }: { profile: Profile; set
         </div>
       </div>
 
+      {/* 공유 기능 */}
+      <div className="grid grid-cols-2 gap-3">
+        <button onClick={() => {
+          const shareText = `🔮 타일러의 타이르는 운세\n${profile.name}님의 사주 결과\n\n띠: ${animal?.animal}\n별자리: ${zodiac?.name}\n생명수: ${lifePath}\n\n오늘의 운세를 확인해보세요!\nhttps://app-pi-one-65.vercel.app`;
+          if (navigator.share) {
+            navigator.share({title:"타일러의 타이르는 운세", text:shareText, url:"https://app-pi-one-65.vercel.app"});
+          } else {
+            navigator.clipboard.writeText(shareText);
+            alert("클립보드에 복사되었습니다! 붙여넣기로 공유하세요 📋");
+          }
+        }} className="py-3 bg-mystic-card border border-border rounded-xl text-sm hover:border-gold/40 transition">
+          📤 결과 공유하기
+        </button>
+        <button onClick={() => setTab("match")}
+          className="py-3 bg-mystic-card border border-border rounded-xl text-sm hover:border-purple-glow/40 transition">
+          💕 궁합 보기
+        </button>
+      </div>
+
       {/* 도사에게 물어보기 */}
       <button onClick={() => setTab("chat")}
         className="w-full py-4 bg-gradient-to-r from-purple-glow to-gold rounded-2xl font-bold text-sm hover:opacity-90 transition">
@@ -619,6 +638,129 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
   );
 }
 
+// ========== 궁합 ==========
+function MatchTab({ profile }: { profile: Profile }) {
+  const [partner, setPartner] = useState({ name: "", year: "", month: "", day: "" });
+  const [matchType, setMatchType] = useState<"love"|"business"|"friend">("love");
+  const [result, setResult] = useState<null|{score:number;desc:string;details:string[]}>(null);
+  const [loading, setLoading] = useState(false);
+
+  const matchLabels = {love:"💕 연애 궁합", business:"💼 사업 궁합", friend:"🤝 친구 궁합"};
+
+  const analyzeMatch = async () => {
+    if (!partner.year || !partner.month || !partner.day) return;
+    if (!profile.year) { alert("먼저 근본 탭에서 내 정보를 입력해주세요!"); return; }
+    setLoading(true);
+
+    try {
+      const prompt = `사주 궁합을 봐주세요.
+
+나: ${profile.name || "본인"}, ${profile.year}.${profile.month}.${profile.day}생${profile.hour ? ` ${profile.hour}시` : ""}
+상대: ${partner.name || "상대방"}, ${partner.year}.${partner.month}.${partner.day}생
+
+궁합 유형: ${matchLabels[matchType]}
+
+다음을 분석해주세요:
+1. 두 사람의 띠(12지신) 관계 (삼합/육합/충/형/파/해)
+2. 오행 궁합 (상생/상극)
+3. 궁합 점수 (100점 만점)
+4. ${matchType === "love" ? "연애/결혼" : matchType === "business" ? "사업/동업" : "우정/친구"} 관점에서의 조언
+5. 주의할 점과 강점
+
+표와 이모지를 적극 활용해서 보기 좋게 정리해주세요.`;
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_KEY}`,
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            system_instruction: {parts: [{text: "당신은 '콜잇도사'입니다. 동서양 심리철학 융합 운세 AI. 따뜻하고 전문적인 톤. 추론은 짧게, 답변은 풍부하게."}]},
+            contents: [{role:"user", parts:[{text:prompt}]}],
+            generationConfig: {temperature:0.8, maxOutputTokens:8192, thinkingConfig:{thinkingBudget:256}},
+          }),
+        }
+      );
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.filter((p: {text?:string}) => p.text).map((p: {text:string}) => p.text).join("") || "분석에 실패했습니다.";
+      setResult({score:0, desc:text, details:[]});
+    } catch {
+      setResult({score:0, desc:"네트워크 오류. 다시 시도해주세요.", details:[]});
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="space-y-4 py-4">
+      <div className="text-center">
+        <h2 className="text-lg font-bold text-gold">💕 사주 궁합</h2>
+        <p className="text-text-muted text-xs">두 사람의 운명적 관계를 분석합니다</p>
+      </div>
+
+      {/* 궁합 유형 선택 */}
+      <div className="grid grid-cols-3 gap-2">
+        {(["love","business","friend"] as const).map(t => (
+          <button key={t} onClick={() => setMatchType(t)}
+            className={`py-2.5 rounded-xl text-xs font-medium transition ${matchType === t ? "bg-purple-glow/30 border border-purple-glow text-purple-glow" : "bg-mystic-card border border-border text-text-muted"}`}>
+            {matchLabels[t]}
+          </button>
+        ))}
+      </div>
+
+      {/* 내 정보 */}
+      <div className="bg-mystic-card border border-border rounded-2xl p-4">
+        <p className="text-xs text-gold font-bold mb-2">👤 나</p>
+        <p className="text-xs text-text-secondary">
+          {profile.name || "미입력"} · {profile.year ? `${profile.year}.${profile.month}.${profile.day}` : "근본 탭에서 입력해주세요"}
+        </p>
+      </div>
+
+      {/* 상대 정보 */}
+      <div className="bg-mystic-card border border-border rounded-2xl p-4 space-y-3">
+        <p className="text-xs text-purple-glow font-bold">💫 상대방</p>
+        <input type="text" placeholder="이름" value={partner.name}
+          onChange={e => setPartner({...partner, name:e.target.value})}
+          className="w-full bg-mystic border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-purple-glow/50 outline-none" />
+        <div className="grid grid-cols-3 gap-2">
+          <input type="number" placeholder="생년" value={partner.year}
+            onChange={e => setPartner({...partner, year:e.target.value})}
+            className="bg-mystic border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-purple-glow/50 outline-none" />
+          <input type="number" placeholder="월" value={partner.month} min="1" max="12"
+            onChange={e => setPartner({...partner, month:e.target.value})}
+            className="bg-mystic border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-purple-glow/50 outline-none" />
+          <input type="number" placeholder="일" value={partner.day} min="1" max="31"
+            onChange={e => setPartner({...partner, day:e.target.value})}
+            className="bg-mystic border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:border-purple-glow/50 outline-none" />
+        </div>
+      </div>
+
+      <button onClick={analyzeMatch} disabled={loading}
+        className="w-full py-3.5 bg-gradient-to-r from-purple-glow to-gold rounded-xl font-bold text-sm hover:opacity-90 transition disabled:opacity-50">
+        {loading ? "🔮 분석 중..." : `🔮 ${matchLabels[matchType]} 분석하기`}
+      </button>
+
+      {/* 결과 */}
+      {result && (
+        <div className="bg-mystic-card border border-gold/20 rounded-2xl p-4">
+          <p className="text-sm font-bold text-gold mb-3">📊 궁합 분석 결과</p>
+          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_h3]:text-gold [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_strong]:text-text-primary [&_table]:text-[10px] [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_th]:bg-mystic/50 [&_p]:my-1">
+            <ReactMarkdown>{result.desc}</ReactMarkdown>
+          </div>
+
+          {/* 공유 */}
+          <button onClick={() => {
+            const text = `🔮 타일러의 타이르는 운세 - 궁합 결과\n${profile.name} ❤️ ${partner.name}\n${matchLabels[matchType]}\n\nhttps://app-pi-one-65.vercel.app`;
+            if (navigator.share) navigator.share({title:"궁합 결과", text});
+            else { navigator.clipboard.writeText(text); alert("복사됨!"); }
+          }} className="w-full mt-3 py-2 bg-mystic/50 border border-border rounded-xl text-xs text-text-muted hover:text-gold transition">
+            📤 궁합 결과 공유하기
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ========== 만상도 ==========
 function GraphTab() {
   return (
@@ -722,7 +864,7 @@ export default function Home() {
       <main className="relative z-10 max-w-lg mx-auto px-4 pb-24">
         {tab === "root" && <RootTab profile={profile} setProfile={setProfile} saved={saved} setTab={setTab} />}
         {tab === "chat" && <ChatTab profile={profile} />}
-        {tab === "graph" && <GraphTab />}
+        {tab === "match" && <MatchTab profile={profile} />}
         {tab === "my" && <MyPage profile={profile} setProfile={setProfile} setTab={setTab} />}
       </main>
     </div>
