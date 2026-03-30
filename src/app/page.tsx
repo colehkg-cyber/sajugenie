@@ -658,19 +658,20 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
         <div ref={bottomRef} />
       </div>
 
-      <div className="px-2 pb-2 flex gap-2">
-        <input
-          type="text"
+      <div className="px-2 pb-2 flex gap-2 items-end">
+        <textarea
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onChange={(e) => { setInput(e.target.value); e.target.style.height="auto"; e.target.style.height=Math.min(e.target.scrollHeight,120)+"px"; }}
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
           placeholder="사주, 타로, 운세 무엇이든 물어보세요..."
-          className="flex-1 bg-mystic border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:border-gold/50 outline-none"
+          rows={1}
+          className="flex-1 bg-mystic border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:border-gold/50 outline-none resize-none overflow-hidden"
+          style={{minHeight:"44px"}}
         />
         <button
           onClick={sendMessage}
           disabled={loading}
-          className="px-4 py-3 bg-gradient-to-r from-purple-glow to-gold rounded-xl font-bold text-sm disabled:opacity-50"
+          className="px-4 py-3 bg-gradient-to-r from-purple-glow to-gold rounded-xl font-bold text-sm disabled:opacity-50 shrink-0"
         >
           ✨
         </button>
