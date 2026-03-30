@@ -250,6 +250,17 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
             { label: "년주", gan: saju.yearGan, ji: saju.yearJi },
           ];
           const elColors: Record<string,string> = {"목":"#27ae60","화":"#e74c3c","토":"#d4a437","금":"#bdc3c7","수":"#3498db"};
+          // 천간 이모지 3개 (쉬운 설명)
+          const ganEmoji: Record<string,string> = {
+            "갑":"🌳💪🏔️", "을":"🌿🌸🎨", "병":"☀️🔥👑", "정":"🕯️✨💡",
+            "무":"🏔️🛡️🧱", "기":"🌾🏡🤝", "경":"⚔️💎🪨", "신":"💍✂️🔬",
+            "임":"🌊🧠🌏", "계":"💧🌙🔮"
+          };
+          const ganDesc: Record<string,string> = {
+            "갑":"큰나무·리더·개척", "을":"풀꽃·유연·예술", "병":"태양·열정·카리스마", "정":"촛불·따뜻·섬세",
+            "무":"큰산·안정·신뢰", "기":"논밭·포용·실용", "경":"바위·결단·의리", "신":"보석·예민·완벽",
+            "임":"큰바다·지혜·포용", "계":"이슬·직관·영감"
+          };
           return (
             <>
               <div className="bg-mystic-card border border-border rounded-2xl p-4">
@@ -259,12 +270,13 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
                     <div key={p.label} className="text-center">
                       <p className="text-[10px] text-text-muted mb-1">{p.label}</p>
                       <div className="rounded-lg p-2 mb-1" style={{backgroundColor: elColors[p.gan.element]+"20", border: `1px solid ${elColors[p.gan.element]}40`}}>
-                        <p className="text-lg font-bold" style={{color: elColors[p.gan.element]}}>{p.gan.hanja}</p>
-                        <p className="text-[10px] text-text-muted">{p.gan.name}{p.gan.element}</p>
+                        <p className="text-xl font-bold" style={{color: elColors[p.gan.element]}}>{p.gan.hanja}</p>
+                        <p className="text-sm">{ganEmoji[p.gan.name] || "✨✨✨"}</p>
+                        <p className="text-[10px] text-text-secondary mt-0.5">{ganDesc[p.gan.name] || p.gan.keyword}</p>
                       </div>
                       <div className="rounded-lg p-2" style={{backgroundColor: elColors[p.ji.element]+"20", border: `1px solid ${elColors[p.ji.element]}40`}}>
-                        <p className="text-lg font-bold" style={{color: elColors[p.ji.element]}}>{p.ji.animal.split(" ")[0]}</p>
-                        <p className="text-[10px] text-text-muted">{p.ji.name}{p.ji.element}</p>
+                        <p className="text-xl">{p.ji.animal.split(" ")[0]}</p>
+                        <p className="text-[10px] text-text-secondary">{p.ji.animal.split(" ")[1] || p.ji.name}</p>
                       </div>
                     </div>
                   ))}
