@@ -7,7 +7,7 @@ import {
 } from "@/data/fortune";
 import { TODAY_FORTUNE } from "@/data/daily-fortune";
 
-type Tab = "root" | "chat" | "my";
+type Tab = "root" | "chat" | "graph" | "my";
 
 interface Profile {
   name: string;
@@ -38,7 +38,8 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   const items: { id: Tab; icon: string; label: string }[] = [
     { id: "root", icon: "🔮", label: "근본" },
     { id: "chat", icon: "💬", label: "타일러 도사" },
-    { id: "my", icon: "👤", label: "마이페이지" },
+    { id: "graph", icon: "🌐", label: "만상도" },
+    { id: "my", icon: "👤", label: "MY" },
   ];
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-mystic/95 backdrop-blur-xl border-t border-border safe-bottom">
@@ -613,6 +614,25 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
   );
 }
 
+// ========== 만상도 ==========
+function GraphTab() {
+  return (
+    <div className="py-4 space-y-3">
+      <div className="text-center">
+        <h2 className="text-lg font-bold text-gold">🌐 萬象圖 (만상도)</h2>
+        <p className="text-text-muted text-xs">동서양 심리철학 통합 RAG 지식 그래프</p>
+      </div>
+      <div className="rounded-2xl overflow-hidden border border-border" style={{height:"calc(100vh - 200px)"}}>
+        <iframe
+          src="https://colehkg-cyber.github.io/mansangdo/"
+          className="w-full h-full border-0"
+          title="만상도"
+        />
+      </div>
+    </div>
+  );
+}
+
 // ========== 마이페이지 ==========
 function MyPage({ profile, setProfile, setTab }: { profile: Profile; setProfile: (p: Profile) => void; setTab: (t: Tab) => void }) {
   const [history, setHistory] = useState<{date:string;type:string}[]>([]);
@@ -697,6 +717,7 @@ export default function Home() {
       <main className="relative z-10 max-w-lg mx-auto px-4 pb-24">
         {tab === "root" && <RootTab profile={profile} setProfile={setProfile} saved={saved} />}
         {tab === "chat" && <ChatTab profile={profile} />}
+        {tab === "graph" && <GraphTab />}
         {tab === "my" && <MyPage profile={profile} setProfile={setProfile} setTab={setTab} />}
       </main>
     </div>
