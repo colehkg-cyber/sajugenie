@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   getTodayTarot, getLuckyElements, getDailyFortune, getAnimalSign, getZodiac,
   getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, JIJI, CHEONGAN,
@@ -493,21 +493,121 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
 }
 
 // ========== 채팅 탭 ==========
-function ChatTab() {
+function ChatTab({ profile }: { profile: Profile }) {
+  const [messages, setMessages] = useState<{role:string;text:string}[]>([
+    {role:"ai", text:"안녕하세요! 콜잇도사입니다 🔮\n\n사주·타로·수비학·별자리·인상학·도교·최면심리학을 융합한 동서양 운세 AI입니다.\n\n무엇이든 물어보세요! 오늘의 운세, 사주 풀이, 타로 해석, 인간관계 상담 등 다양한 상담이 가능합니다."},
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const bottomRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({behavior:"smooth"}); }, [messages]);
+
+  const SYSTEM = `당신은 '콜잇도사'입니다. 동서양 심리철학(사주명리학+타로+수비학+별자리+인상학+도교+최면심리학) 융합 운세 AI 전문가입니다.
+
+[응답 규칙]
+- 자신을 '콜잇도사'로 칭함
+- 따뜻하고 차분한 전문가 톤 (심리상담가처럼)
+- 사주 용어는 한자+한글+쉬운설명 병행
+- 표 활용, 섹션 정리 (최대 5개)
+- 역사적 인물/사건 비유로 배움도 함께
+- 답변 끝에 격려 한마디
+
+[사용자 정보]
+이름: ${profile.name || "익명"}
+${profile.nameHanja ? `한자: ${profile.nameHanja}` : ""}
+${profile.year ? `생년월일: ${profile.year}.${profile.month}.${profile.day}` : "생년월일 미입력"}
+${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
+
+[전문 지식]
+- 사주: 천간10 지지12 오행상생상극 십신 용신 대운 세운 합충형파
+- 타로: 메이저22장 마이너56장 정역방향 카바라 스프레드
+- 수비학: 생명수 마스터넘버 이름획수
+- 별자리: 12궁 4원소 행성
+- 인상학: 오악 삼정 십이궁 오행얼굴형
+- 도교: 내단(정기신) 외단 양생 소주천대주천
+- 최면심리학: 자기암시 이완 융원형론`;
+
+  const sendMessage = async () => {
+    if (!input.trim() || loading) return;
+    const userMsg = input.trim();
+    setInput("");
+    setMessages(prev => [...prev, {role:"user", text:userMsg}]);
+    setLoading(true);
+
+    try {
+      const history = messages.slice(-10).map(m => ({
+        role: m.role === "ai" ? "model" : "user",
+        parts: [{text: m.text}]
+      }));
+
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_KEY}`,
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            system_instruction: {parts: [{text: SYSTEM}]},
+            contents: [...history, {role:"user", parts:[{text:userMsg}]}],
+            generationConfig: {temperature:0.8, maxOutputTokens:2048},
+          }),
+        }
+      );
+      const data = await res.json();
+      const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "죄송합니다. 잠시 후 다시 시도해주세요.";
+      setMessages(prev => [...prev, {role:"ai", text:aiText}]);
+    } catch {
+      setMessages(prev => [...prev, {role:"ai", text:"네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요."}]);
+    }
+    setLoading(false);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-      <span className="text-6xl">💬</span>
-      <h2 className="text-xl font-bold text-gold">타이르는 타일러 도사</h2>
-      <p className="text-text-secondary text-sm text-center px-8">
-        AI 도사와 실시간 대화 상담
-      </p>
-      <div className="bg-mystic-card border border-border rounded-2xl p-6 max-w-sm text-center">
-        <p className="text-purple-glow text-sm font-bold mb-2">🚧 Phase 2 준비 중</p>
-        <p className="text-xs text-text-muted leading-relaxed">
-          Claude API 연동 후 실시간 상담이 가능합니다.<br/>
-          사주·타로·인상학·최면심리학 기반<br/>
-          맞춤형 AI 상담을 제공할 예정입니다.
-        </p>
+    <div className="flex flex-col h-[calc(100vh-80px)]">
+      <div className="text-center py-2">
+        <h2 className="text-sm font-bold text-gold">💬 콜잇도사와 대화</h2>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-2 space-y-3 pb-4">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+            <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+              m.role === "user"
+                ? "bg-purple-glow/30 border border-purple-glow/40"
+                : "bg-mystic-card border border-border"
+            }`}>
+              {m.role === "ai" && <p className="text-[10px] text-gold mb-1">🔮 콜잇도사</p>}
+              <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">{m.text}</p>
+            </div>
+          </div>
+        ))}
+        {loading && (
+          <div className="flex justify-start">
+            <div className="bg-mystic-card border border-border rounded-2xl px-4 py-3">
+              <p className="text-[10px] text-gold mb-1">🔮 콜잇도사</p>
+              <p className="text-xs text-text-muted animate-pulse">답변 생성 중...</p>
+            </div>
+          </div>
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      <div className="px-2 pb-2 flex gap-2">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          placeholder="사주, 타로, 운세 무엇이든 물어보세요..."
+          className="flex-1 bg-mystic border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:border-gold/50 outline-none"
+        />
+        <button
+          onClick={sendMessage}
+          disabled={loading}
+          className="px-4 py-3 bg-gradient-to-r from-purple-glow to-gold rounded-xl font-bold text-sm disabled:opacity-50"
+        >
+          ✨
+        </button>
       </div>
     </div>
   );
@@ -596,7 +696,7 @@ export default function Home() {
       <BottomNav tab={tab} setTab={setTab} />
       <main className="relative z-10 max-w-lg mx-auto px-4 pb-24">
         {tab === "root" && <RootTab profile={profile} setProfile={setProfile} saved={saved} />}
-        {tab === "chat" && <ChatTab />}
+        {tab === "chat" && <ChatTab profile={profile} />}
         {tab === "my" && <MyPage profile={profile} setProfile={setProfile} setTab={setTab} />}
       </main>
     </div>
