@@ -543,7 +543,7 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
       }));
 
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_KEY}`,
         {
           method: "POST",
           headers: {"Content-Type": "application/json"},
