@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   getTodayTarot, getLuckyElements, getDailyFortune, getAnimalSign, getZodiac,
   getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, JIJI, CHEONGAN,
-  PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY,
+  PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY, getDetailedDailyFortune,
 } from "@/data/fortune";
 
 type Tab = "root" | "chat" | "my";
@@ -220,15 +220,23 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
         </p>
       </div>
 
-      {/* 나의 운세 (내 띠) */}
-      {animal && (
+      {/* 나의 운세 (내 띠) — RAG 기반 상세 */}
+      {animal && (() => {
+        const myFortune = getDetailedDailyFortune(ganji.ji.name, animal.name);
+        return (
         <div className="bg-mystic-card border border-purple-glow/30 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-2">
             <p className="font-bold text-sm">⭐ 나의 운세 — {animal.animal}</p>
-            <span className="text-gold text-sm font-bold">{getAnimalDailyScore(myAnimalIdx)}%</span>
+            <span className={`text-sm font-bold ${myFortune.score >= 80 ? "text-gold" : myFortune.score >= 50 ? "text-text-secondary" : "text-fire"}`}>{myFortune.score}%</span>
           </div>
-          <div className="grid grid-cols-4 gap-2 mb-2">
-            {[{l:"재물",s:((getAnimalDailyScore(myAnimalIdx)*0.95)|0)},{l:"건강",s:((getAnimalDailyScore(myAnimalIdx)*1.02)|0)},{l:"사랑",s:((getAnimalDailyScore(myAnimalIdx)*0.98)|0)},{l:"행운",s:((getAnimalDailyScore(myAnimalIdx)*1.05)|0)}].map(x => (
+          {myFortune.type !== "보통" && (
+            <div className="bg-mystic/50 rounded-lg px-3 py-1.5 mb-2">
+              <p className="text-xs text-purple-glow font-bold">{myFortune.type}</p>
+            </div>
+          )}
+          <p className="text-xs text-text-secondary leading-relaxed mb-3">{myFortune.text}</p>
+          <div className="grid grid-cols-4 gap-2">
+            {[{l:"💰재물",s:((myFortune.score*0.95)|0)},{l:"💪건강",s:((myFortune.score*1.02)|0)},{l:"💕사랑",s:((myFortune.score*0.98)|0)},{l:"🍀행운",s:((myFortune.score*1.05)|0)}].map(x => (
               <div key={x.l} className="text-center bg-mystic/50 rounded-lg p-1.5">
                 <p className="text-[10px] text-text-muted">{x.l}</p>
                 <p className="text-xs font-bold text-gold">{Math.min(x.s, 99)}</p>
@@ -236,7 +244,8 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
             ))}
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {/* 통합 분석 리포트 */}
       <div className="space-y-3">
@@ -398,17 +407,16 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
         <p className="font-bold text-sm text-gold mb-3">📋 오늘의 12띠 운세</p>
         <div className="space-y-3">
           {JIJI.map((ji, idx) => {
-            const score = getAnimalDailyScore(idx);
+            const fortune = getDetailedDailyFortune(ganji.ji.name, ji.name);
             const isMe = idx === myAnimalIdx;
             return (
               <div key={ji.name} className={`rounded-xl p-3 ${isMe ? "bg-gold/10 border border-gold/30" : "bg-mystic/50"}`}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-bold">{ji.animal} {isMe && "⭐"}</span>
-                  <span className={`text-sm font-bold ${score >= 80 ? "text-gold" : score >= 50 ? "text-text-secondary" : "text-fire"}`}>{score}%</span>
+                  <span className="text-sm font-bold">{ji.animal} {isMe && "⭐"} {fortune.score >= 90 && "🏆"} {fortune.score <= 40 && "⚠️"}</span>
+                  <span className={`text-sm font-bold ${fortune.score >= 80 ? "text-gold" : fortune.score >= 50 ? "text-text-secondary" : "text-fire"}`}>{fortune.score}%</span>
                 </div>
-                <p className="text-[10px] text-text-secondary">
-                  재물 {Math.min(((score*0.95)|0),99)} · 건강 {Math.min(((score*1.02)|0),99)} · 사랑 {Math.min(((score*0.98)|0),99)} · 행운 {Math.min(((score*1.05)|0),99)}
-                </p>
+                {fortune.type !== "보통" && <p className="text-[10px] text-purple-glow font-medium mb-0.5">{fortune.type}</p>}
+                <p className="text-[10px] text-text-secondary leading-relaxed">{fortune.text}</p>
               </div>
             );
           })}
