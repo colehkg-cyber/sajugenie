@@ -5,6 +5,7 @@ import {
   getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, JIJI, CHEONGAN,
   PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY, getDetailedDailyFortune,
 } from "@/data/fortune";
+import { TODAY_FORTUNE } from "@/data/daily-fortune";
 
 type Tab = "root" | "chat" | "my";
 
@@ -225,28 +226,27 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
         </p>
       </div>
 
-      {/* 나의 운세 (내 띠) — RAG 기반 상세 */}
+      {/* 나의 운세 — 노션 데이터 기반 */}
       {animal && (() => {
-        const myFortune = getDetailedDailyFortune(ganji.ji.name, animal.name);
+        const animalName = animal.animal.split(" ")[1] || "";
+        const myData = TODAY_FORTUNE.animals.find(a => a.name.includes(animalName));
+        if (!myData) return null;
         return (
         <div className="bg-mystic-card border border-purple-glow/30 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <p className="font-bold text-sm">⭐ 나의 운세 — {animal.animal}</p>
-            <span className={`text-sm font-bold ${myFortune.score >= 80 ? "text-gold" : myFortune.score >= 50 ? "text-text-secondary" : "text-fire"}`}>{myFortune.score}%</span>
+            <p className="font-bold text-sm">⭐ 나의 운세 — {myData.emoji} {myData.name} {myData.tag}</p>
+            <span className={`text-sm font-bold ${myData.score >= 80 ? "text-gold" : myData.score >= 50 ? "text-text-secondary" : "text-fire"}`}>{myData.score}%</span>
           </div>
-          {myFortune.type !== "보통" && (
-            <div className="bg-mystic/50 rounded-lg px-3 py-1.5 mb-2">
-              <p className="text-xs text-purple-glow font-bold">{myFortune.type}</p>
-            </div>
-          )}
-          <p className="text-xs text-text-secondary leading-relaxed mb-3">{myFortune.text}</p>
-          <div className="grid grid-cols-4 gap-2">
-            {[{l:"💰재물",s:((myFortune.score*0.95)|0)},{l:"💪건강",s:((myFortune.score*1.02)|0)},{l:"💕사랑",s:((myFortune.score*0.98)|0)},{l:"🍀행운",s:((myFortune.score*1.05)|0)}].map(x => (
-              <div key={x.l} className="text-center bg-mystic/50 rounded-lg p-1.5">
-                <p className="text-[10px] text-text-muted">{x.l}</p>
-                <p className="text-xs font-bold text-gold">{Math.min(x.s, 99)}</p>
-              </div>
+          <div className="space-y-1 mb-3">
+            {myData.details.map((d, i) => (
+              <p key={i} className="text-xs text-text-secondary leading-relaxed">{d}</p>
             ))}
+          </div>
+          <div className="grid grid-cols-4 gap-2">
+            <div className="text-center bg-mystic/50 rounded-lg p-1.5"><p className="text-[10px] text-text-muted">💰재물</p><p className="text-xs font-bold text-gold">{myData.scores.money}</p></div>
+            <div className="text-center bg-mystic/50 rounded-lg p-1.5"><p className="text-[10px] text-text-muted">💪건강</p><p className="text-xs font-bold text-gold">{myData.scores.health}</p></div>
+            <div className="text-center bg-mystic/50 rounded-lg p-1.5"><p className="text-[10px] text-text-muted">💕사랑</p><p className="text-xs font-bold text-gold">{myData.scores.love}</p></div>
+            <div className="text-center bg-mystic/50 rounded-lg p-1.5"><p className="text-[10px] text-text-muted">🍀행운</p><p className="text-xs font-bold text-gold">{myData.scores.luck}</p></div>
           </div>
         </div>
         );
@@ -407,24 +407,36 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
         </div>
       </div>
 
-      {/* 12띠 오늘의 운세 (공유용) */}
+      {/* 12띠 오늘의 운세 — 노션과 동일 */}
       <div className="bg-mystic-card border border-border rounded-2xl p-4">
-        <p className="font-bold text-sm text-gold mb-3">📋 오늘의 12띠 운세</p>
-        <div className="space-y-3">
-          {JIJI.map((ji, idx) => {
-            const fortune = getDetailedDailyFortune(ganji.ji.name, ji.name);
-            const isMe = idx === myAnimalIdx;
+        <p className="font-bold text-sm text-gold mb-1">{TODAY_FORTUNE.headline}</p>
+        <p className="text-xs text-text-secondary mb-3">{TODAY_FORTUNE.description}</p>
+        <div className="space-y-4">
+          {TODAY_FORTUNE.animals.map((a) => {
+            const isMe = animal && a.name.includes(animal.animal.split(" ")[1] || "");
             return (
-              <div key={ji.name} className={`rounded-xl p-3 ${isMe ? "bg-gold/10 border border-gold/30" : "bg-mystic/50"}`}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-bold">{ji.animal} {isMe && "⭐"} {fortune.score >= 90 && "🏆"} {fortune.score <= 40 && "⚠️"}</span>
-                  <span className={`text-sm font-bold ${fortune.score >= 80 ? "text-gold" : fortune.score >= 50 ? "text-text-secondary" : "text-fire"}`}>{fortune.score}%</span>
+              <div key={a.name} className={`rounded-xl p-3 ${isMe ? "bg-gold/10 border border-gold/30" : "bg-mystic/50"}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold">{a.emoji} {a.name} {a.tag} {isMe && !a.tag && "⭐내띠"}</span>
+                  <span className={`text-sm font-bold ${a.score >= 80 ? "text-gold" : a.score >= 50 ? "text-text-secondary" : "text-fire"}`}>{a.score}%</span>
                 </div>
-                {fortune.type !== "보통" && <p className="text-[10px] text-purple-glow font-medium mb-0.5">{fortune.type}</p>}
-                <p className="text-[10px] text-text-secondary leading-relaxed">{fortune.text}</p>
+                <div className="space-y-1 mb-2">
+                  {a.details.map((d, i) => (
+                    <p key={i} className="text-[11px] text-text-secondary leading-relaxed">{d}</p>
+                  ))}
+                </div>
+                <div className="grid grid-cols-4 gap-1">
+                  <div className="text-center bg-mystic/50 rounded px-1 py-0.5"><p className="text-[9px] text-text-muted">재물</p><p className="text-[10px] font-bold text-gold">{a.scores.money}</p></div>
+                  <div className="text-center bg-mystic/50 rounded px-1 py-0.5"><p className="text-[9px] text-text-muted">건강</p><p className="text-[10px] font-bold text-gold">{a.scores.health}</p></div>
+                  <div className="text-center bg-mystic/50 rounded px-1 py-0.5"><p className="text-[9px] text-text-muted">사랑</p><p className="text-[10px] font-bold text-gold">{a.scores.love}</p></div>
+                  <div className="text-center bg-mystic/50 rounded px-1 py-0.5"><p className="text-[9px] text-text-muted">행운</p><p className="text-[10px] font-bold text-gold">{a.scores.luck}</p></div>
+                </div>
               </div>
             );
           })}
+        </div>
+        <div className="mt-4 bg-mystic/50 rounded-xl p-3 text-center">
+          <p className="text-[10px] text-text-muted whitespace-pre-line">{TODAY_FORTUNE.footer}</p>
         </div>
       </div>
 
