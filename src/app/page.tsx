@@ -152,14 +152,14 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
           
           <div>
             <label className="text-xs text-text-muted">이름</label>
-            <input type="text" placeholder="이름 입력" value={profile.name}
+            <input type="text" placeholder="홍길동" value={profile.name}
               onChange={(e) => setProfile({...profile, name: e.target.value})}
               className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
           </div>
 
           <div>
             <label className="text-xs text-text-muted">이름 한자 발음 (선택)</label>
-            <input type="text" placeholder="ex) 밝을현 준법준" value={profile.nameHanja}
+            <input type="text" placeholder="넓을홍 길할길 동녘동" value={profile.nameHanja}
               onChange={(e) => setProfile({...profile, nameHanja: e.target.value})}
               className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
           </div>
@@ -167,19 +167,19 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="text-xs text-text-muted">생년 *</label>
-              <input type="number" placeholder="1990" value={profile.year}
+              <input type="number" placeholder="1995" value={profile.year}
                 onChange={(e) => setProfile({...profile, year: e.target.value})}
                 className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
             </div>
             <div>
               <label className="text-xs text-text-muted">월 *</label>
-              <input type="number" placeholder="1" min="1" max="12" value={profile.month}
+              <input type="number" placeholder="6" min="1" max="12" value={profile.month}
                 onChange={(e) => setProfile({...profile, month: e.target.value})}
                 className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
             </div>
             <div>
               <label className="text-xs text-text-muted">일 *</label>
-              <input type="number" placeholder="1" min="1" max="31" value={profile.day}
+              <input type="number" placeholder="15" min="1" max="31" value={profile.day}
                 onChange={(e) => setProfile({...profile, day: e.target.value})}
                 className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
             </div>
@@ -187,7 +187,7 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
 
           <div>
             <label className="text-xs text-text-muted">태어난 시 (선택, 0~23)</label>
-            <input type="number" placeholder="ex) 15" min="0" max="23" value={profile.hour}
+            <input type="number" placeholder="14" min="0" max="23" value={profile.hour}
               onChange={(e) => setProfile({...profile, hour: e.target.value})}
               className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
           </div>
