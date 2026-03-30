@@ -7,6 +7,7 @@ import {
 } from "@/data/fortune";
 import { TODAY_FORTUNE } from "@/data/daily-fortune";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type Tab = "root" | "chat" | "graph" | "my" | "match";
 
@@ -535,6 +536,8 @@ function ChatTab({ profile }: { profile: Profile }) {
 - 답변 끝에 격려 한마디
 - 추론은 짧게, 답변 내용은 풍부하고 길게
 - 불필요한 반복이나 서론 생략, 바로 핵심부터
+- 표(table)보다는 리스트(-)나 이모지로 정리 (모바일 화면 최적화)
+- 마크다운 표를 쓸 경우 컬럼은 3개 이하로 간결하게
 
 [사용자 정보]
 이름: ${profile.name || "익명"}
@@ -601,7 +604,7 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
             }`}>
               {m.role === "ai" && <p className="text-[10px] text-gold mb-1">🔮 콜잇도사</p>}
               <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_h3]:text-gold [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_strong]:text-text-primary [&_table]:text-[10px] [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_th]:bg-mystic/50 [&_hr]:border-border [&_p]:my-1">
-                <ReactMarkdown>{m.text}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.text}</ReactMarkdown>
               </div>
             </div>
           </div>
@@ -744,7 +747,7 @@ function MatchTab({ profile }: { profile: Profile }) {
         <div className="bg-mystic-card border border-gold/20 rounded-2xl p-4">
           <p className="text-sm font-bold text-gold mb-3">📊 궁합 분석 결과</p>
           <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_h3]:text-gold [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_strong]:text-text-primary [&_table]:text-[10px] [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_th]:bg-mystic/50 [&_p]:my-1">
-            <ReactMarkdown>{result.desc}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.desc}</ReactMarkdown>
           </div>
 
           {/* 공유 */}
