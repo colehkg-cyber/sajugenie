@@ -441,19 +441,8 @@ function RootTab({ profile, setProfile, saved, setTab }: { profile: Profile; set
           )}
         </div>
 
-        {/* 인상학 */}
-        <div className="bg-mystic-card border border-border rounded-2xl p-4">
-          <p className="font-bold text-sm text-purple-glow mb-2">👤 인상학 — 오행 얼굴형</p>
-          <div className="space-y-1.5">
-            {PHYSIOGNOMY.faceShapes.items.map((f: { element: string; shape: string; personality: string }) => (
-              <div key={f.element} className="flex items-center gap-2 text-xs">
-                <span>{f.element.includes("목")?"🌳":f.element.includes("화")?"🔥":f.element.includes("토")?"🏔️":f.element.includes("금")?"⚔️":"💧"}</span>
-                <span className="font-medium w-20">{f.element}</span>
-                <span className="text-text-secondary">{f.shape}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* 인상학 + 사진 분석 */}
+        <FaceAnalysis />
 
         {/* 행운 요소 */}
         <div className="bg-mystic-card border border-gold/20 rounded-2xl p-4">
@@ -660,6 +649,129 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
           ✨
         </button>
       </div>
+    </div>
+  );
+}
+
+// ========== 인상학 사진 분석 ==========
+function FaceAnalysis() {
+  const [faceImg, setFaceImg] = useState<string|null>(null);
+  const [palmImg, setPalmImg] = useState<string|null>(null);
+  const [faceResult, setFaceResult] = useState<string|null>(null);
+  const [palmResult, setPalmResult] = useState<string|null>(null);
+  const [loading, setLoading] = useState<string|null>(null);
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>, type: "face"|"palm") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = (reader.result as string).split(",")[1];
+      if (type === "face") { setFaceImg(reader.result as string); analyzeFace(base64, type); }
+      else { setPalmImg(reader.result as string); analyzeFace(base64, type); }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const analyzeFace = async (base64: string, type: "face"|"palm") => {
+    setLoading(type);
+    if (type === "face") setFaceResult(null);
+    else setPalmResult(null);
+
+    const prompt = type === "face"
+      ? `이 얼굴 사진을 인상학(人相學) 관점에서 분석해주세요.
+
+분석 항목:
+1. 오행 얼굴형 (목/화/토/금/수 중 어떤 형인지)
+2. 삼정(三停) 분석 (상정/중정/하정 균형)
+3. 오악(五岳) 분석 (이마/코/광대/턱)
+4. 전체적인 인상 해석 (성격, 재물운, 대인관계)
+5. 강점과 주의할 점
+
+따뜻하고 긍정적인 톤으로, 이모지 활용해서 보기 좋게 정리해주세요.`
+      : `이 손 사진을 수상학(手相學) 관점에서 분석해주세요.
+
+분석 항목:
+1. 생명선 — 건강과 활력
+2. 두뇌선 — 지능과 사고방식
+3. 감정선 — 감정과 연애관
+4. 운명선 — 직업과 성취
+5. 손가락 길이와 모양 — 성격 특성
+6. 전체적인 손 모양 (오행 분류)
+
+따뜻하고 긍정적인 톤으로, 이모지 활용해서 보기 좋게 정리해주세요.`;
+
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_KEY}`,
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            system_instruction: {parts: [{text: "당신은 '콜잇도사'. 동서양 인상학+수상학 전문가. 따뜻하고 전문적. 추론 짧게 답변 풍부하게. 표보다 리스트."}]},
+            contents: [{role:"user", parts:[
+              {text: prompt},
+              {inline_data: {mime_type: "image/jpeg", data: base64}}
+            ]}],
+            generationConfig: {temperature:0.8, maxOutputTokens:4096, thinkingConfig:{thinkingBudget:256}},
+          }),
+        }
+      );
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.filter((p: {text?:string}) => p.text).map((p: {text:string}) => p.text).join("") || "분석에 실패했습니다.";
+      if (type === "face") setFaceResult(text);
+      else setPalmResult(text);
+    } catch {
+      const errMsg = "네트워크 오류. 다시 시도해주세요.";
+      if (type === "face") setFaceResult(errMsg);
+      else setPalmResult(errMsg);
+    }
+    setLoading(null);
+  };
+
+  return (
+    <div className="bg-mystic-card border border-border rounded-2xl p-4 space-y-4">
+      <p className="font-bold text-sm text-purple-glow">👤 인상학 · 수상학 AI 분석</p>
+
+      {/* 얼굴 사진 */}
+      <div className="bg-mystic/50 rounded-xl p-3">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs font-medium">😊 얼굴 사진</p>
+          <label className="px-3 py-1.5 bg-purple-glow/20 text-purple-glow rounded-lg text-[10px] cursor-pointer hover:bg-purple-glow/30 transition">
+            {faceImg ? "📷 다시 촬영" : "📷 사진 올리기"}
+            <input type="file" accept="image/*" capture="user" className="hidden" onChange={e => handleUpload(e, "face")} />
+          </label>
+        </div>
+        {faceImg && <img src={faceImg} alt="얼굴" className="w-full h-40 object-cover rounded-lg mb-2" />}
+        {loading === "face" && <p className="text-xs text-gold animate-pulse">🔮 인상 분석 중...</p>}
+        {faceResult && (
+          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{faceResult}</ReactMarkdown>
+          </div>
+        )}
+      </div>
+
+      {/* 손 사진 */}
+      <div className="bg-mystic/50 rounded-xl p-3">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs font-medium">✋ 손금 사진</p>
+          <label className="px-3 py-1.5 bg-purple-glow/20 text-purple-glow rounded-lg text-[10px] cursor-pointer hover:bg-purple-glow/30 transition">
+            {palmImg ? "📷 다시 촬영" : "📷 사진 올리기"}
+            <input type="file" accept="image/*" capture="environment" className="hidden" onChange={e => handleUpload(e, "palm")} />
+          </label>
+        </div>
+        {palmImg && <img src={palmImg} alt="손" className="w-full h-40 object-cover rounded-lg mb-2" />}
+        {loading === "palm" && <p className="text-xs text-gold animate-pulse">🔮 손금 분석 중...</p>}
+        {palmResult && (
+          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{palmResult}</ReactMarkdown>
+          </div>
+        )}
+      </div>
+
+      {!faceImg && !palmImg && (
+        <p className="text-[10px] text-text-muted text-center">사진을 올리면 AI가 인상학·수상학 분석을 해드립니다</p>
+      )}
     </div>
   );
 }
