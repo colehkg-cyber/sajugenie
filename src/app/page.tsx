@@ -514,6 +514,8 @@ function ChatTab({ profile }: { profile: Profile }) {
 - 표 활용, 섹션 정리 (최대 5개)
 - 역사적 인물/사건 비유로 배움도 함께
 - 답변 끝에 격려 한마디
+- 추론은 짧게, 답변 내용은 풍부하고 길게
+- 불필요한 반복이나 서론 생략, 바로 핵심부터
 
 [사용자 정보]
 이름: ${profile.name || "익명"}
@@ -551,7 +553,7 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
           body: JSON.stringify({
             system_instruction: {parts: [{text: SYSTEM}]},
             contents: [...history, {role:"user", parts:[{text:userMsg}]}],
-            generationConfig: {temperature:0.8, maxOutputTokens:8192},
+            generationConfig: {temperature:0.8, maxOutputTokens:8192, thinkingConfig:{thinkingBudget:256}},
           }),
         }
       );
