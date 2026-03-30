@@ -101,7 +101,7 @@ function getAnimalDailyScore(animalIdx: number) {
 }
 
 // ========== 근본 탭 ==========
-function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile: (p: Profile) => void; saved: boolean }) {
+function RootTab({ profile, setProfile, saved, setTab }: { profile: Profile; setProfile: (p: Profile) => void; saved: boolean; setTab: (t: Tab) => void }) {
   const [showResult, setShowResult] = useState(saved);
   const ganji = getDailyGanji();
   const today = new Date();
@@ -483,7 +483,7 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
       </div>
 
       {/* 도사에게 물어보기 */}
-      <button onClick={() => {/* setTab will be handled by parent */}}
+      <button onClick={() => setTab("chat")}
         className="w-full py-4 bg-gradient-to-r from-purple-glow to-gold rounded-2xl font-bold text-sm hover:opacity-90 transition">
         💬 타일러 도사에게 더 물어보기
       </button>
@@ -715,7 +715,7 @@ export default function Home() {
       <Stars />
       <BottomNav tab={tab} setTab={setTab} />
       <main className="relative z-10 max-w-lg mx-auto px-4 pb-24">
-        {tab === "root" && <RootTab profile={profile} setProfile={setProfile} saved={saved} />}
+        {tab === "root" && <RootTab profile={profile} setProfile={setProfile} saved={saved} setTab={setTab} />}
         {tab === "chat" && <ChatTab profile={profile} />}
         {tab === "graph" && <GraphTab />}
         {tab === "my" && <MyPage profile={profile} setProfile={setProfile} setTab={setTab} />}
