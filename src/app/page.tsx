@@ -339,14 +339,43 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
                 <p className="text-[10px] text-text-muted mt-1">일간: {saju.dayGan.hanja}({saju.dayGan.element}) — {saju.dayGan.keyword}</p>
               </div>
 
-              {/* 일주 풀이 */}
+              {/* 4주 상세 풀이 */}
               {(() => {
                 const ilju = getIljuDesc(saju.dayGan.name, saju.dayJi.name);
+                const elEmoji2: Record<string,string> = {"목":"🌳","화":"🔥","토":"🏔️","금":"⚔️","수":"💧"};
+                const jiAnimal: Record<string,string> = {"자":"🐭쥐","축":"🐮소","인":"🐯호랑이","묘":"🐰토끼","진":"🐲용","사":"🐍뱀","오":"🐴말","미":"🐑양","신":"🐵원숭이","유":"🐔닭","술":"🐶개","해":"🐷돼지"};
+                
+                const pillarInfo = [
+                  {label:"년주(年柱)", icon:"🏛️", meaning:"조상궁 · 사회적 환경", period:"0~15세 초년기", gan:saju.yearGan, ji:saju.yearJi,
+                   reading:`${saju.yearGan.name}${saju.yearJi.name} 년주는 당신의 뿌리와 가문을 나타냅니다. ${elEmoji2[saju.yearGan.element]}${saju.yearGan.keyword.split("—")[0]}의 하늘 기운 아래 ${jiAnimal[saju.yearJi.name]}의 땅 기운이 깔려 있어, ${saju.yearGan.element === saju.yearJi.element ? "같은 오행이 만나 조상덕이 강합니다." : saju.yearGan.element === "수" && saju.yearJi.element === "수" ? "물의 기운이 넘쳐 지혜로운 집안입니다." : "다양한 기운이 만나 변화무쌍한 유년기를 보냈을 수 있습니다."}`},
+                  {label:"월주(月柱)", icon:"👨‍👩‍👧", meaning:"부모궁 · 성장환경 · 사회성", period:"15~30세 청년기", gan:saju.monthGan, ji:saju.monthJi,
+                   reading:`${saju.monthGan.name}${saju.monthJi.name} 월주는 부모님과 성장 환경, 그리고 사회에서 보여지는 당신의 모습입니다. ${elEmoji2[saju.monthGan.element]}${saju.monthGan.keyword.split("—")[0]}의 에너지가 청년기를 지배하며, ${jiAnimal[saju.monthJi.name]}의 기운이 직업 적성과 사회적 성향을 결정합니다. ${saju.monthGan.element === "토" ? "안정적이고 신뢰감 있는 사회생활이 예상됩니다." : saju.monthGan.element === "화" ? "열정적이고 카리스마 있는 사회활동이 특징입니다." : saju.monthGan.element === "수" ? "지혜롭고 전략적인 사회생활을 합니다." : saju.monthGan.element === "목" ? "성장하고 개척하는 사회활동이 어울립니다." : "결단력 있고 실용적인 사회생활을 합니다."}`},
+                  {label:"일주(日柱)", icon:"💎", meaning:"본인 · 배우자궁 · 핵심 성격", period:"30~45세 장년기", gan:saju.dayGan, ji:saju.dayJi,
+                   reading: ilju.desc},
+                  ...(saju.hasHour ? [{label:"시주(時柱)", icon:"👶", meaning:"자녀궁 · 말년 · 꿈과 이상", period:"45세~ 말년기", gan:saju.hourGan, ji:saju.hourJi,
+                   reading:`${saju.hourGan.name}${saju.hourJi.name} 시주는 당신의 자녀운과 말년, 그리고 내면 깊은 곳의 이상을 나타냅니다. ${elEmoji2[saju.hourGan.element]}${saju.hourGan.keyword.split("—")[0]}의 기운이 말년을 지배하며, ${jiAnimal[saju.hourJi.name]}의 에너지가 자녀와의 관계를 결정합니다. ${saju.hourGan.element === saju.dayGan.element ? "일주와 같은 오행이라 말년이 안정적입니다." : "다른 오행이 만나 말년에 새로운 변화가 찾아올 수 있습니다."}`}] : []),
+                ];
+                
                 return (
-                  <div className="bg-mystic-card border border-gold/20 rounded-2xl p-4">
-                    <p className="font-bold text-sm text-gold mb-2">📖 나의 일주 풀이</p>
-                    <p className="text-sm font-medium text-purple-glow mb-2">{ilju.title}</p>
-                    <p className="text-xs text-text-secondary leading-relaxed">{ilju.desc}</p>
+                  <div className="bg-mystic-card border border-gold/20 rounded-2xl p-4 space-y-4">
+                    <p className="font-bold text-sm text-gold">📖 사주 4주 상세 풀이</p>
+                    {pillarInfo.map((p) => (
+                      <div key={p.label} className="bg-mystic/50 rounded-xl p-3">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-lg">{p.icon}</span>
+                          <div>
+                            <p className="text-xs font-bold text-purple-glow">{p.label}</p>
+                            <p className="text-[10px] text-text-muted">{p.meaning} · {p.period}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 mb-2">
+                          <span className="text-xs px-2 py-0.5 rounded-full" style={{backgroundColor: elColors[p.gan.element]+"30", color: elColors[p.gan.element]}}>{p.gan.hanja}{p.gan.name}</span>
+                          <span className="text-[10px] text-text-muted">+</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full" style={{backgroundColor: elColors[p.ji.element]+"30", color: elColors[p.ji.element]}}>{jiAnimal[p.ji.name]}</span>
+                        </div>
+                        <p className="text-[11px] text-text-secondary leading-relaxed">{p.reading}</p>
+                      </div>
+                    ))}
                   </div>
                 );
               })()}
