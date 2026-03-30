@@ -189,6 +189,32 @@ function RootTab({ profile, setProfile, saved, setTab }: { profile: Profile; set
             </div>
           </div>
 
+          {/* 사진 업로드 */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-text-muted">😊 얼굴 사진 (선택)</label>
+              <label className="mt-1 flex items-center justify-center gap-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-muted cursor-pointer hover:border-purple-glow/50 transition">
+                📷 촬영/업로드
+                <input type="file" accept="image/*" capture="user" className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) { const r = new FileReader(); r.onload = () => localStorage.setItem("tyler_face", r.result as string); r.readAsDataURL(file); }
+                  }} />
+              </label>
+            </div>
+            <div>
+              <label className="text-xs text-text-muted">✋ 손금 사진 (선택)</label>
+              <label className="mt-1 flex items-center justify-center gap-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-muted cursor-pointer hover:border-purple-glow/50 transition">
+                📷 촬영/업로드
+                <input type="file" accept="image/*" capture="environment" className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) { const r = new FileReader(); r.onload = () => localStorage.setItem("tyler_palm", r.result as string); r.readAsDataURL(file); }
+                  }} />
+              </label>
+            </div>
+          </div>
+
           <div>
             <label className="text-xs text-text-muted">태어난 시 (선택, 0~23)</label>
             <input type="number" placeholder="14" min="0" max="23" value={profile.hour}
