@@ -266,20 +266,27 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
               <div className="bg-mystic-card border border-border rounded-2xl p-4">
                 <p className="font-bold text-sm text-purple-glow mb-3">📜 사주원국(四柱八字)</p>
                 <div className="grid grid-cols-4 gap-2">
-                  {pillars.map((p) => (
+                  {pillars.map((p) => {
+                    const jiHanja: Record<string,string> = {"자":"子","축":"丑","인":"寅","묘":"卯","진":"辰","사":"巳","오":"午","미":"未","신":"申","유":"酉","술":"戌","해":"亥"};
+                    const elEmoji: Record<string,string> = {"목":"🌳","화":"🔥","토":"🏔️","금":"⚔️","수":"💧"};
+                    return (
                     <div key={p.label} className="text-center">
                       <p className="text-[10px] text-text-muted mb-1">{p.label}</p>
                       <div className="rounded-lg p-2 mb-1" style={{backgroundColor: elColors[p.gan.element]+"20", border: `1px solid ${elColors[p.gan.element]}40`}}>
-                        <p className="text-xl font-bold" style={{color: elColors[p.gan.element]}}>{p.gan.hanja}</p>
+                        <p className="text-lg font-bold" style={{color: elColors[p.gan.element]}}>{p.gan.hanja}</p>
+                        <p className="text-xs text-text-primary">{p.gan.name}</p>
                         <p className="text-sm">{ganEmoji[p.gan.name] || "✨✨✨"}</p>
-                        <p className="text-[10px] text-text-secondary mt-0.5">{ganDesc[p.gan.name] || p.gan.keyword}</p>
+                        <p className="text-[9px] text-text-muted">{elEmoji[p.gan.element]}{p.gan.element}({p.gan.yinyang})</p>
                       </div>
                       <div className="rounded-lg p-2" style={{backgroundColor: elColors[p.ji.element]+"20", border: `1px solid ${elColors[p.ji.element]}40`}}>
-                        <p className="text-xl">{p.ji.animal.split(" ")[0]}</p>
-                        <p className="text-[10px] text-text-secondary">{p.ji.animal.split(" ")[1] || p.ji.name}</p>
+                        <p className="text-lg font-bold" style={{color: elColors[p.ji.element]}}>{jiHanja[p.ji.name] || ""}</p>
+                        <p className="text-xs text-text-primary">{p.ji.name}</p>
+                        <p className="text-lg">{p.ji.animal.split(" ")[0]}</p>
+                        <p className="text-[9px] text-text-muted">{elEmoji[p.ji.element]}{p.ji.element}</p>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
