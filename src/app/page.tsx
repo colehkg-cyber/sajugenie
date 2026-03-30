@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   getTodayTarot, getLuckyElements, getDailyFortune, getAnimalSign, getZodiac,
   getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, JIJI, CHEONGAN,
-  PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY, getDetailedDailyFortune, getIljuDesc,
+  PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY, getDetailedDailyFortune, getIljuDesc, ILJU_TYPE,
 } from "@/data/fortune";
 import { TODAY_FORTUNE } from "@/data/daily-fortune";
 import ReactMarkdown from "react-markdown";
@@ -341,6 +341,29 @@ function RootTab({ profile, setProfile, saved, setTab }: { profile: Profile; set
                 </p>
                 <p className="text-[10px] text-text-muted mt-1">일간: {saju.dayGan.hanja}({saju.dayGan.element}) — {saju.dayGan.keyword}</p>
               </div>
+
+              {/* 일주 유형 카드 — MBTI처럼 */}
+              {(() => {
+                const key = saju.dayGan.name + saju.dayJi.name;
+                const iljuType = ILJU_TYPE[key];
+                const ilju = getIljuDesc(saju.dayGan.name, saju.dayJi.name);
+                const jiHanjaMap: Record<string,string> = {"자":"子","축":"丑","인":"寅","묘":"卯","진":"辰","사":"巳","오":"午","미":"未","신":"申","유":"酉","술":"戌","해":"亥"};
+                return (
+                  <div className="bg-gradient-to-br from-mystic-card to-mystic border border-gold/30 rounded-2xl p-5 text-center">
+                    <p className="text-3xl mb-2">{iljuType?.emoji || "🔮🔮"}</p>
+                    <p className="text-gold text-lg font-bold">{saju.dayGan.hanja}{jiHanjaMap[saju.dayJi.name]}({saju.dayGan.name}{saju.dayJi.name})일주</p>
+                    <p className="text-purple-glow text-xl font-bold mt-1">{iljuType?.type || "독특한 존재"}</p>
+                    {iljuType?.mbti && <p className="text-text-muted text-xs mt-1">유사 MBTI: {iljuType.mbti}</p>}
+                    <p className="text-xs text-text-secondary mt-3 leading-relaxed">{ilju.desc}</p>
+                    {iljuType?.famous && (
+                      <div className="mt-3 bg-mystic/50 rounded-xl p-3">
+                        <p className="text-[10px] text-text-muted mb-1">🌟 비슷한 유명인</p>
+                        <p className="text-sm font-bold text-gold">{iljuType.famous.join(" · ")}</p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {/* 4주 상세 풀이 */}
               {(() => {

@@ -665,3 +665,30 @@ export function getIljuDesc(ganName: string, jiName: string): {title: string; de
     } 당신만의 독특한 매력과 잠재력을 발휘해보세요.`
   };
 }
+
+// ─── 일주별 유형 + 유명인 매칭 ───
+export const ILJU_TYPE: Record<string, {type: string; emoji: string; famous: string[]; mbti: string}> = {
+  "갑자": {type:"지혜로운 개척자", emoji:"🧠⚔️", famous:["이순신","일론 머스크"], mbti:"INTJ"},
+  "갑인": {type:"카리스마 리더", emoji:"👑🐯", famous:["징기스칸","스티브 잡스"], mbti:"ENTJ"},
+  "갑진": {type:"야심찬 전략가", emoji:"🐉💼", famous:["조조","제프 베조스"], mbti:"ENTJ"},
+  "을축": {type:"인내의 장인", emoji:"🔨🌾", famous:["세종대왕","워렌 버핏"], mbti:"ISTJ"},
+  "을묘": {type:"감성 예술가", emoji:"🎨🐰", famous:["모차르트","아이유"], mbti:"INFP"},
+  "을사": {type:"불꽃 크리에이터", emoji:"🔥✨", famous:["피카소","방시혁"], mbti:"ENFP"},
+  "병오": {type:"태양의 열정가", emoji:"☀️🔥", famous:["나폴레옹","손흥민"], mbti:"ESTP"},
+  "병자": {type:"극적인 예술혼", emoji:"🌙☀️", famous:["반고흐","김연아"], mbti:"INFJ"},
+  "정사": {type:"신비로운 통찰자", emoji:"🔮🐍", famous:["노스트라다무스","BTS RM"], mbti:"INFJ"},
+  "정미": {type:"따뜻한 중재자", emoji:"🕯️🐑", famous:["간디","유재석"], mbti:"ENFJ"},
+  "무신": {type:"실용적 지략가", emoji:"🏔️🐵", famous:["제갈공명","빌 게이츠"], mbti:"INTP"},
+  "무술": {type:"철벽 수호자", emoji:"🛡️🐶", famous:["관우","이건희"], mbti:"ISTJ"},
+  "기유": {type:"완벽주의 심미가", emoji:"💎🐔", famous:["레오나르도 다빈치","블랙핑크 제니"], mbti:"ISFJ"},
+  "기해": {type:"관대한 부자", emoji:"💰🐷", famous:["록펠러","마윈"], mbti:"ESFJ"},
+  "경술": {type:"의리의 강자", emoji:"⚔️🐶", famous:["이성계","박지성"], mbti:"ESTJ"},
+  "경자": {type:"냉철한 분석가", emoji:"❄️🐭", famous:["셜록 홈즈","안철수"], mbti:"INTJ"},
+  "신해": {type:"세련된 직관가", emoji:"💍💧", famous:["코코 샤넬","손석희"], mbti:"ISFP"},
+  "임자": {type:"천재 전략가", emoji:"🌊🧠", famous:["아인슈타인","이세돌"], mbti:"INTP"},
+  "임진": {type:"스케일의 제왕", emoji:"🌊🐉", famous:["알렉산더 대왕","정주영"], mbti:"ENTJ"},
+  "계사": {type:"스파크 혁신가", emoji:"💧⚡", famous:["니콜라 테슬라","마크 저커버그"], mbti:"ENTP"},
+  "계축": {type:"묵묵한 학자", emoji:"💧📚", famous:["공자","이황(퇴계)"], mbti:"ISTJ"},
+  "계묘": {type:"치유의 감성가", emoji:"💧🌸", famous:["나이팅게일","아이유"], mbti:"INFP"},
+  "계해": {type:"영적 탐구자", emoji:"💧🔮", famous:["달라이 라마","법정 스님"], mbti:"INFJ"},
+};
