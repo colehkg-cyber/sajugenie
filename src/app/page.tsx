@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   getTodayTarot, getLuckyElements, getDailyFortune, getAnimalSign, getZodiac,
   getLifePath, MONTHLY_2026, ELEMENT_COLORS, TAROT_MAJOR, JIJI, CHEONGAN,
-  PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY, getDetailedDailyFortune,
+  PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY, getDetailedDailyFortune, getIljuDesc,
 } from "@/data/fortune";
 import { TODAY_FORTUNE } from "@/data/daily-fortune";
 
@@ -338,6 +338,18 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
                 </p>
                 <p className="text-[10px] text-text-muted mt-1">일간: {saju.dayGan.hanja}({saju.dayGan.element}) — {saju.dayGan.keyword}</p>
               </div>
+
+              {/* 일주 풀이 */}
+              {(() => {
+                const ilju = getIljuDesc(saju.dayGan.name, saju.dayJi.name);
+                return (
+                  <div className="bg-mystic-card border border-gold/20 rounded-2xl p-4">
+                    <p className="font-bold text-sm text-gold mb-2">📖 나의 일주 풀이</p>
+                    <p className="text-sm font-medium text-purple-glow mb-2">{ilju.title}</p>
+                    <p className="text-xs text-text-secondary leading-relaxed">{ilju.desc}</p>
+                  </div>
+                );
+              })()}
             </>
           );
         })()}
