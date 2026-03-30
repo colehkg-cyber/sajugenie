@@ -6,6 +6,7 @@ import {
   PHYSIOGNOMY, getSajuWonguk, NUMEROLOGY, getDetailedDailyFortune, getIljuDesc,
 } from "@/data/fortune";
 import { TODAY_FORTUNE } from "@/data/daily-fortune";
+import ReactMarkdown from "react-markdown";
 
 type Tab = "root" | "chat" | "graph" | "my";
 
@@ -550,7 +551,7 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
           body: JSON.stringify({
             system_instruction: {parts: [{text: SYSTEM}]},
             contents: [...history, {role:"user", parts:[{text:userMsg}]}],
-            generationConfig: {temperature:0.8, maxOutputTokens:2048},
+            generationConfig: {temperature:0.8, maxOutputTokens:8192},
           }),
         }
       );
@@ -578,7 +579,9 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
                 : "bg-mystic-card border border-border"
             }`}>
               {m.role === "ai" && <p className="text-[10px] text-gold mb-1">🔮 콜잇도사</p>}
-              <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">{m.text}</p>
+              <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_h3]:text-gold [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_strong]:text-text-primary [&_table]:text-[10px] [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_th]:bg-mystic/50 [&_hr]:border-border [&_p]:my-1">
+                <ReactMarkdown>{m.text}</ReactMarkdown>
+              </div>
             </div>
           </div>
         ))}
