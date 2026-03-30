@@ -1000,6 +1000,16 @@ function MyPage({ profile, setProfile, setTab }: { profile: Profile; setProfile:
         )}
       </div>
 
+      {/* 만상도 */}
+      <div className="bg-mystic-card border border-border rounded-2xl p-5">
+        <h3 className="font-bold text-sm text-gold mb-2">🌐 萬象圖 (만상도)</h3>
+        <p className="text-xs text-text-muted mb-3">동서양 심리철학 통합 RAG 지식 그래프</p>
+        <a href="https://colehkg-cyber.github.io/mansangdo/" target="_blank" rel="noopener noreferrer"
+          className="block w-full py-2.5 bg-purple-glow/20 text-purple-glow rounded-lg text-xs text-center hover:bg-purple-glow/30 transition">
+          🌐 만상도 열기 →
+        </a>
+      </div>
+
       <button onClick={clearData} className="w-full py-2 text-fire/60 text-xs hover:text-fire transition">데이터 초기화</button>
     </div>
   );
