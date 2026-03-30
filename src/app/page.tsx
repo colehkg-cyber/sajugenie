@@ -152,14 +152,14 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
           
           <div>
             <label className="text-xs text-text-muted">이름</label>
-            <input type="text" placeholder="안현준" value={profile.name}
+            <input type="text" placeholder="이름 입력" value={profile.name}
               onChange={(e) => setProfile({...profile, name: e.target.value})}
               className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
           </div>
 
           <div>
             <label className="text-xs text-text-muted">이름 한자 발음 (선택)</label>
-            <input type="text" placeholder="밝을현 준법준" value={profile.nameHanja}
+            <input type="text" placeholder="ex) 밝을현 준법준" value={profile.nameHanja}
               onChange={(e) => setProfile({...profile, nameHanja: e.target.value})}
               className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
           </div>
@@ -167,27 +167,27 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="text-xs text-text-muted">생년 *</label>
-              <input type="number" placeholder="1995" value={profile.year}
+              <input type="number" placeholder="1990" value={profile.year}
                 onChange={(e) => setProfile({...profile, year: e.target.value})}
                 className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
             </div>
             <div>
               <label className="text-xs text-text-muted">월 *</label>
-              <input type="number" placeholder="12" min="1" max="12" value={profile.month}
+              <input type="number" placeholder="1" min="1" max="12" value={profile.month}
                 onChange={(e) => setProfile({...profile, month: e.target.value})}
                 className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
             </div>
             <div>
               <label className="text-xs text-text-muted">일 *</label>
-              <input type="number" placeholder="28" min="1" max="31" value={profile.day}
+              <input type="number" placeholder="1" min="1" max="31" value={profile.day}
                 onChange={(e) => setProfile({...profile, day: e.target.value})}
                 className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
             </div>
           </div>
 
           <div>
-            <label className="text-xs text-text-muted">태어난 시 (선택)</label>
-            <input type="number" placeholder="15" min="0" max="23" value={profile.hour}
+            <label className="text-xs text-text-muted">태어난 시 (선택, 0~23)</label>
+            <input type="number" placeholder="ex) 15" min="0" max="23" value={profile.hour}
               onChange={(e) => setProfile({...profile, hour: e.target.value})}
               className="w-full mt-1 bg-mystic border border-border rounded-lg px-3 py-2.5 text-sm text-text-primary focus:border-gold/50 outline-none" />
           </div>
@@ -195,6 +195,11 @@ function RootTab({ profile, setProfile, saved }: { profile: Profile; setProfile:
           <button onClick={handleSubmit}
             className="w-full py-3.5 bg-gradient-to-r from-purple-glow to-gold rounded-xl font-bold text-sm hover:opacity-90 transition">
             🔮 운세 보기
+          </button>
+
+          <button onClick={() => { localStorage.clear(); window.location.reload(); }}
+            className="w-full py-2 text-text-muted text-[10px] hover:text-fire/60 transition">
+            🗑️ 캐시 초기화
           </button>
         </div>
 
