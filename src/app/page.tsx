@@ -467,6 +467,9 @@ function RootTab({ profile, setProfile, saved, setTab }: { profile: Profile; set
           )}
         </div>
 
+        {/* 타로 카드 뽑기 */}
+        <TarotPull />
+
         {/* 인상학 + 사진 분석 */}
         <FaceAnalysis />
 
@@ -798,6 +801,146 @@ function FaceAnalysis() {
 
       {!faceImg && !palmImg && (
         <p className="text-[10px] text-text-muted text-center">사진을 올리면 AI가 인상학·수상학 분석을 해드립니다</p>
+      )}
+    </div>
+  );
+}
+
+// ========== 타로 뽑기 ==========
+function TarotPull() {
+  const [question, setQuestion] = useState("");
+  const [count, setCount] = useState(3);
+  const [cards, setCards] = useState<{card: typeof TAROT_MAJOR[0]; reversed: boolean}[]>([]);
+  const [reading, setReading] = useState<string|null>(null);
+  const [loading, setLoading] = useState(false);
+  const [phase, setPhase] = useState<"ask"|"pick"|"result">("ask");
+  const [deck, setDeck] = useState<number[]>([]);
+  const [picked, setPicked] = useState<number[]>([]);
+
+  const startPick = () => {
+    if (!question.trim()) return;
+    const shuffled = Array.from({length:22}, (_,i)=>i).sort(()=>Math.random()-0.5);
+    setDeck(shuffled);
+    setPicked([]);
+    setCards([]);
+    setReading(null);
+    setPhase("pick");
+  };
+
+  const pickCard = (idx: number) => {
+    if (picked.includes(idx) || picked.length >= count) return;
+    const newPicked = [...picked, idx];
+    setPicked(newPicked);
+    const cardIdx = deck[idx];
+    const reversed = Math.random() > 0.7;
+    const newCards = [...cards, {card: TAROT_MAJOR[cardIdx], reversed}];
+    setCards(newCards);
+
+    if (newCards.length >= count) {
+      setTimeout(() => interpretCards(newCards), 500);
+    }
+  };
+
+  const interpretCards = async (pickedCards: typeof cards) => {
+    setPhase("result");
+    setLoading(true);
+    const cardDesc = pickedCards.map((c,i) => 
+      `${i+1}번: ${c.card.name}(${c.card.eng}) ${c.reversed?"역방향":"정방향"} — ${c.reversed ? c.card.reverse : c.card.keyword}`
+    ).join("\n");
+
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_KEY}`,
+        {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({
+            system_instruction: {parts:[{text:"당신은 '콜잇도사'. 타로 전문가. 따뜻하고 전문적. 추론 짧게 답변 풍부하게. 표보다 리스트와 이모지. 각 카드를 깊이 해석하고 질문에 맞게 종합."}]},
+            contents: [{role:"user", parts:[{text:`타로 리딩 해주세요.\n\n질문: ${question}\n\n뽑은 카드:\n${cardDesc}\n\n각 카드의 의미를 질문에 맞게 깊이 해석하고, 종합 메시지를 주세요.`}]}],
+            generationConfig: {temperature:0.8, maxOutputTokens:4096, thinkingConfig:{thinkingBudget:256}},
+          }),
+        }
+      );
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.filter((p:{text?:string})=>p.text).map((p:{text:string})=>p.text).join("") || "해석에 실패했습니다.";
+      setReading(text);
+    } catch {
+      setReading("네트워크 오류. 다시 시도해주세요.");
+    }
+    setLoading(false);
+  };
+
+  const reset = () => { setPhase("ask"); setCards([]); setReading(null); setPicked([]); setQuestion(""); };
+
+  return (
+    <div className="bg-mystic-card border border-purple-glow/20 rounded-2xl p-4 space-y-4">
+      <p className="font-bold text-sm text-purple-glow text-center">🃏 타로 카드 뽑기</p>
+
+      {phase === "ask" && (
+        <>
+          <textarea value={question} onChange={e=>setQuestion(e.target.value)}
+            placeholder="질문을 입력하세요... (연애, 사업, 오늘 운세 등)"
+            rows={2}
+            className="w-full bg-mystic border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:border-purple-glow/50 outline-none resize-none" />
+          <div className="flex gap-2 justify-center">
+            {[1,3,5,7].map(n => (
+              <button key={n} onClick={() => setCount(n)}
+                className={`px-4 py-2 rounded-xl text-xs font-medium transition ${count===n ? "bg-purple-glow/30 border border-purple-glow text-purple-glow" : "bg-mystic/50 border border-border text-text-muted"}`}>
+                {n}장
+              </button>
+            ))}
+          </div>
+          <button onClick={startPick} className="w-full py-3 bg-gradient-to-r from-purple-glow to-gold rounded-xl font-bold text-sm">
+            🔮 카드 섞기
+          </button>
+        </>
+      )}
+
+      {phase === "pick" && (
+        <>
+          <p className="text-xs text-text-secondary text-center">카드를 {count}장 골라주세요 ({picked.length}/{count})</p>
+          <div className="grid grid-cols-7 gap-1.5">
+            {deck.map((_, idx) => (
+              <button key={idx} onClick={() => pickCard(idx)}
+                disabled={picked.includes(idx)}
+                className={`aspect-[2/3] rounded-lg text-lg transition-all ${
+                  picked.includes(idx) 
+                    ? "bg-gold/30 border-2 border-gold scale-95" 
+                    : "bg-purple-glow/10 border border-purple-glow/30 hover:bg-purple-glow/20 hover:scale-105"
+                }`}>
+                {picked.includes(idx) ? "✨" : "🂠"}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* 뽑은 카드 표시 */}
+      {cards.length > 0 && (
+        <div className="flex justify-center gap-3 flex-wrap">
+          {cards.map((c, i) => (
+            <div key={i} className={`w-20 bg-mystic/50 border rounded-xl p-2 text-center ${c.reversed ? "border-fire/40" : "border-gold/40"}`}>
+              <p className="text-[10px] text-text-muted">{i+1}번</p>
+              <p className="text-2xl my-1">{c.reversed ? "🔄" : "✨"}</p>
+              <p className="text-[10px] font-bold">{c.card.name}</p>
+              <p className="text-[8px] text-text-muted">{c.reversed ? "역" : "정"}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* AI 해석 */}
+      {loading && <p className="text-xs text-gold text-center animate-pulse">🔮 콜잇도사가 카드를 해석하고 있습니다...</p>}
+      {reading && (
+        <div className="bg-mystic/50 rounded-xl p-4 text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{reading}</ReactMarkdown>
+        </div>
+      )}
+
+      {phase === "result" && !loading && (
+        <button onClick={reset} className="w-full py-2 bg-mystic/50 border border-border rounded-xl text-xs text-text-muted hover:text-gold transition">
+          🔄 다시 뽑기
+        </button>
       )}
     </div>
   );
