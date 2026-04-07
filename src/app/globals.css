@@ -21,6 +21,11 @@
   --color-earth: #d4a437;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   font-family: 'Pretendard', -apple-system, system-ui, sans-serif;
   background: linear-gradient(135deg, #0d0221 0%, #1a0a2e 50%, #150929 100%);
@@ -31,3 +36,19 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--color-mystic); }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+
+/* ===== Design System ===== */
+
+/* 공통 카드 */
+.card { @apply bg-mystic-card border border-border rounded-2xl p-4; }
+
+/* 공통 버튼 */
+.btn-primary { @apply w-full py-3 bg-gradient-to-r from-purple-glow to-gold rounded-xl font-bold text-sm hover:opacity-90 transition; }
+.btn-secondary { @apply px-4 py-2 bg-mystic/50 border border-border rounded-xl text-xs text-text-muted hover:text-gold transition; }
+
+/* 공통 입력창 */
+.input-base { @apply w-full bg-mystic border border-border rounded-xl px-4 py-3 text-sm text-text-primary placeholder:text-text-muted focus:border-gold/50 outline-none; }
+
+/* 섹션 타이틀 */
+.section-title { @apply font-bold text-sm text-gold mb-2; }
+.section-subtitle { @apply text-xs text-text-muted; }

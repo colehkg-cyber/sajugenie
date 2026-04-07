@@ -48,7 +48,7 @@ function BottomNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
       <div className="flex justify-around max-w-lg mx-auto">
         {items.map((t) => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`flex flex-col items-center py-3 px-4 text-xs transition-colors ${tab === t.id ? "text-gold" : "text-text-muted hover:text-text-secondary"}`}>
+            className={`flex-1 flex flex-col items-center py-3 px-4 text-xs transition-colors ${tab === t.id ? "text-gold" : "text-text-muted hover:text-text-secondary"}`}>
             <span className="text-xl">{t.icon}</span>
             <span className="mt-1">{t.label}</span>
           </button>
@@ -635,13 +635,13 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
       <div className="flex-1 overflow-y-auto px-2 space-y-3 pb-4">
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+            <div className={`${m.role === "user" ? "max-w-[80%]" : "max-w-[85%]"} rounded-2xl px-4 py-3 overflow-hidden break-words ${
               m.role === "user"
                 ? "bg-purple-glow/30 border border-purple-glow/40"
                 : "bg-mystic-card border border-border"
             }`}>
               {m.role === "ai" && <p className="text-[10px] text-gold mb-1">🔮 콜잇도사</p>}
-              <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_h3]:text-gold [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_strong]:text-text-primary [&_table]:text-[10px] [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_th]:bg-mystic/50 [&_hr]:border-border [&_p]:my-1">
+              <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_h3]:text-gold [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_strong]:text-text-primary [&_table]:text-[10px] [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:block [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_th]:bg-mystic/50 [&_hr]:border-border [&_p]:my-1 [&_pre]:overflow-x-auto [&_pre]:max-w-full [&_code]:break-all">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{m.text}</ReactMarkdown>
               </div>
             </div>
@@ -762,7 +762,7 @@ function FaceAnalysis() {
         {faceImg && <img src={faceImg} alt="얼굴" className="w-full h-40 object-cover rounded-lg mb-2" />}
         {loading === "face" && <p className="text-xs text-gold animate-pulse">🔮 인상 분석 중...</p>}
         {faceResult && (
-          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1">
+          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1 [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:block [&_pre]:overflow-x-auto [&_code]:break-all">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{faceResult}</ReactMarkdown>
           </div>
         )}
@@ -780,7 +780,7 @@ function FaceAnalysis() {
         {palmImg && <img src={palmImg} alt="손" className="w-full h-40 object-cover rounded-lg mb-2" />}
         {loading === "palm" && <p className="text-xs text-gold animate-pulse">🔮 손금 분석 중...</p>}
         {palmResult && (
-          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1">
+          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1 [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:block [&_pre]:overflow-x-auto [&_code]:break-all">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{palmResult}</ReactMarkdown>
           </div>
         )}
@@ -912,7 +912,7 @@ function TarotPull() {
       {/* AI 해석 */}
       {loading && <p className="text-xs text-gold text-center animate-pulse">🔮 콜잇도사가 카드를 해석하고 있습니다...</p>}
       {reading && (
-        <div className="bg-mystic/50 rounded-xl p-4 text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1">
+        <div className="bg-mystic/50 rounded-xl p-4 text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_strong]:text-text-primary [&_p]:my-1 [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:block [&_pre]:overflow-x-auto [&_code]:break-all">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>{reading}</ReactMarkdown>
         </div>
       )}
@@ -1024,7 +1024,7 @@ function MatchTab({ profile }: { profile: Profile }) {
       {result && (
         <div className="bg-mystic-card border border-gold/20 rounded-2xl p-4">
           <p className="text-sm font-bold text-gold mb-3">📊 궁합 분석 결과</p>
-          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_h3]:text-gold [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_strong]:text-text-primary [&_table]:text-[10px] [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_th]:bg-mystic/50 [&_p]:my-1">
+          <div className="text-xs text-text-secondary leading-relaxed prose prose-invert prose-xs max-w-none [&_h3]:text-gold [&_h3]:text-sm [&_h3]:mt-3 [&_h3]:mb-1 [&_strong]:text-text-primary [&_table]:text-[10px] [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:block [&_th]:px-2 [&_th]:py-1 [&_td]:px-2 [&_td]:py-1 [&_th]:bg-mystic/50 [&_p]:my-1 [&_pre]:overflow-x-auto [&_code]:break-all">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{result.desc}</ReactMarkdown>
           </div>
 
@@ -1149,10 +1149,10 @@ export default function Home() {
   const saved = !!localStorage.getItem("tyler_profile");
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-x-hidden w-full max-w-full">
       <Stars />
       <BottomNav tab={tab} setTab={setTab} />
-      <main className="relative z-10 max-w-lg mx-auto px-4 pb-24">
+      <main className="relative z-10 max-w-lg mx-auto px-4 pb-24 overflow-x-hidden">
         {tab === "root" && <RootTab profile={profile} setProfile={setProfile} saved={saved} setTab={setTab} />}
         {tab === "chat" && <ChatTab profile={profile} />}
         {tab === "match" && <MatchTab profile={profile} />}
