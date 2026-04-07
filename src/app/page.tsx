@@ -613,7 +613,8 @@ ${profile.hour ? `태어난 시: ${profile.hour}시` : ""}
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           system: SYSTEM,
-          prompt: userMsg
+          prompt: userMsg,
+          history: history
         })
       });
       const data = await res.json();
